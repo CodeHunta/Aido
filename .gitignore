@@ -1,0 +1,28 @@
+# Deps / build
+node_modules/
+apps/*/node_modules/
+.next/
+dist/
+build/
+out/
+*.tsbuildinfo
+
+# Env / secrets — NEVER commit real keys
+.env
+.env.local
+.env.*.local
+
+# Expo / mobile
+.expo/
+apps/mobile/.expo/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Data / volumes
+pgdata/
+redisdata/
+backups/

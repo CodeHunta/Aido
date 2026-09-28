@@ -1,0 +1,23 @@
+{
+  "name": "aido",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Aido — NGX investment intelligence platform",
+  "packageManager": "pnpm@12.6.0",
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "db:migrate": "pnpm --filter @aido/db migrate",
+    "db:seed": "pnpm --filter @aido/db seed",
+    "db:backup": "powershell -File infra/backup.ps1"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.4",
+    "typescript": "^5.6.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

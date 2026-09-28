@@ -1,0 +1,17 @@
+{
+  "name": "@aido/worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx ./index.ts",
+    "lint": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@aido/db": "workspace:*"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3"
+  }
+}
