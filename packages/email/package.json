@@ -1,0 +1,13 @@
+{
+  "name": "@aido/email",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "lint": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "22.7.5",
+    "typescript": "^5.6.3"
+  }
+}

@@ -269,6 +269,15 @@ importers:
         specifier: ^5.6.3
         version: 5.9.3
 
+  packages/email:
+    devDependencies:
+      '@types/node':
+        specifier: 22.7.5
+        version: 22.7.5
+      typescript:
+        specifier: ^5.6.3
+        version: 5.9.3
+
   packages/scoring:
     devDependencies:
       '@types/node':
@@ -286,6 +295,9 @@ importers:
       '@aido/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@aido/email':
+        specifier: workspace:*
+        version: link:../../packages/email
       '@aido/scoring':
         specifier: workspace:*
         version: link:../../packages/scoring

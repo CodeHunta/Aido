@@ -7,10 +7,12 @@
     "dev": "tsx ./index.ts",
     "score": "tsx ./jobs/score.ts",
     "demo:phase5": "tsx ./jobs/demo5.ts",
+    "weekly": "tsx ./jobs/weekly.ts",
     "lint": "tsc --noEmit"
   },
   "dependencies": {
     "@aido/db": "workspace:*",
+    "@aido/email": "workspace:*",
     "@aido/scoring": "workspace:*",
     "drizzle-orm": "0.36.4"
   },
