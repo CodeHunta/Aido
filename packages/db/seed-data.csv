@@ -1,0 +1,43 @@
+ticker,name,sector,categories
+GTCO,Guaranty Trust Holding Company,Financial Services,large-cap|dividend|value
+ZENITH,Zenith Bank,Financial Services,large-cap|dividend|value
+UBA,United Bank for Africa,Financial Services,large-cap|dividend|value
+ACCESSCORP,Access Holdings,Financial Services,large-cap|dividend
+FBNH,FBN Holdings,Financial Services,large-cap|value
+STERLING,Sterling Financial Holdings,Financial Services,value|dividend
+FCMB,FCMB Group,Financial Services,value|dividend
+FIDELITY,Fidelity Bank,Financial Services,growth|dividend
+WEMA,Wema Bank,Financial Services,growth|turnaround
+JAIZ,Jaiz Bank,Financial Services,growth|speculative
+ETI,Ecobank Transnational,Financial Services,value|turnaround
+DANGCEM,Dangote Cement,Industrial Goods,large-cap|dividend|value
+BUACEMENT,BUA Cement,Industrial Goods,large-cap|growth
+WAPCO,Lafarge Africa,Industrial Goods,large-cap|dividend|turnaround
+BERGER,Julius Berger Nigeria,Industrial Goods,value|dividend
+CUTIX,Cutix Cables,Industrial Goods,growth|speculative
+NB,Nigerian Breweries,Consumer Goods,large-cap|dividend|turnaround
+GUINNESS,Guinness Nigeria,Consumer Goods,large-cap|turnaround
+INTBREW,International Breweries,Consumer Goods,turnaround|speculative
+NESTLE,Nestle Nigeria,Consumer Goods,large-cap|dividend|growth
+UNILEVER,Unilever Nigeria,Consumer Goods,turnaround|value
+PZ,PZ Cussons Nigeria,Consumer Goods,value|turnaround
+CADBURY,Cadbury Nigeria,Consumer Goods,growth|speculative
+FLOURMILL,Flour Mills of Nigeria,Consumer Goods,large-cap|value
+DANGSUGAR,Dangote Sugar Refinery,Consumer Goods,large-cap|dividend|growth
+NASCON,NASCON Allied Industries,Consumer Goods,dividend|growth
+BUAFOODS,BUA Foods,Consumer Goods,large-cap|growth|dividend
+HONEYWELL,Honeywell Flour Mills,Consumer Goods,value|turnaround
+MTNN,MTN Nigeria Communications,Telecoms,large-cap|growth|dividend
+AIRTELAFRI,Airtel Africa,Telecoms,large-cap|growth|dividend
+SEPLAT,Seplat Energy,Oil & Gas,large-cap|growth|dividend
+TOTAL,TotalEnergies Marketing Nigeria,Oil & Gas,dividend|value
+OANDO,Oando,Oil & Gas,turnaround|speculative|high-risk
+CONOIL,Conoil,Oil & Gas,dividend|value
+MRS,MRS Oil Nigeria,Oil & Gas,value|speculative
+TRANSCORP,Transnational Corporation,Conglomerate,growth|turnaround
+TRANSCOHOT,Transcorp Hotels,Conglomerate,growth|high-risk
+UACN,UAC of Nigeria,Conglomerate,value|dividend
+AIICO,AIICO Insurance,Financial Services,dividend|value
+CUSTODIAN,Custodian Investment,Financial Services,dividend|growth
+PRESCO,Presco,Agriculture,growth|dividend
+OKOMUOIL,Okomu Oil Palm,Agriculture,growth|dividend
