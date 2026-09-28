@@ -1,0 +1,19 @@
+{
+  "version": "v1",
+  "weights": {
+    "fundamental": 0.25,
+    "valuation": 0.25,
+    "growth": 0.15,
+    "market": 0.1,
+    "dividend": 0.1,
+    "riskInverse": 0.15
+  },
+  "dividendWeightIncomeObjective": 0.2,
+  "thresholds": { "buy": 75, "watch": 65, "hold": 50, "sell": 40 },
+  "gates": {
+    "buyRequiresValuationMin": 45,
+    "buyRequiresConfidenceNotLow": true,
+    "maxConfidenceWhenCoverageBelow": 0.6,
+    "payoutCap": 0.8
+  }
+}

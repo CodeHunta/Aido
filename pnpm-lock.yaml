@@ -262,6 +262,9 @@ importers:
 
   packages/scoring:
     devDependencies:
+      '@types/node':
+        specifier: 22.7.5
+        version: 22.7.5
       typescript:
         specifier: ^5.6.3
         version: 5.9.3
@@ -274,6 +277,12 @@ importers:
       '@aido/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@aido/scoring':
+        specifier: workspace:*
+        version: link:../../packages/scoring
+      drizzle-orm:
+        specifier: 0.36.4
+        version: 0.36.4(@types/react@18.3.31)(postgres@3.4.9)(react@18.3.1)
     devDependencies:
       '@types/node':
         specifier: 22.7.5

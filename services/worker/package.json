@@ -5,10 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "tsx ./index.ts",
+    "score": "tsx ./jobs/score.ts",
     "lint": "tsc --noEmit"
   },
   "dependencies": {
-    "@aido/db": "workspace:*"
+    "@aido/db": "workspace:*",
+    "@aido/scoring": "workspace:*",
+    "drizzle-orm": "0.36.4"
   },
   "devDependencies": {
     "@types/node": "22.7.5",
