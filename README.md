@@ -14,7 +14,7 @@ Then it explains itself: **Why? / Why now? / Why for me? / What could go wrong?*
 
 - Product spec: [`docs/Aido - Product Requirements Document.md`](docs/Aido%20-%20Product%20Requirements%20Document.md)
 - Build plan: [`docs/Aido - Implementation Plan.md`](docs/Aido%20-%20Implementation%20Plan.md)
-- Design preview: open [`docs/design-system-preview.html`](docs/design-system-preview.html) in a browser (no build needed)
+- Design preview: open [`docs/design.html`](docs/design.html) in a browser (no build needed)
 
 ---
 
@@ -114,7 +114,7 @@ EXPO_PUBLIC_API_URL= NEXT_PUBLIC_API_URL=
 
 ## Design system
 
-Preview: `docs/design-system-preview.html` — toggle light/dark.
+Preview: `docs/design.html` — toggle light/dark.
 
 - Tokens in `packages/design-tokens/tokens.json` → Tailwind theme (web) + NativeWind (mobile)
 - Web uses shadcn/ui directly; mobile ports the same props (`<ActionBadge action="BUY"/>`)
