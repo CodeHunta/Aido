@@ -11,7 +11,7 @@ import {
   stocks,
 } from "@aido/db";
 import { analyzePortfolio, impactOfBuy, suitFor } from "@aido/scoring";
-import type { InvestorTraits } from "@aido/scoring/suitability.js";
+import type { InvestorTraits } from "@aido/scoring/suitability";
 
 function stdev(xs: number[]): number {
   if (xs.length < 2) return 0;

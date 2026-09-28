@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { analyzePortfolio, impactOfBuy } from "./portfolio.js";
-import { suitFor } from "./suitability.js";
+import { analyzePortfolio, impactOfBuy } from "./portfolio";
+import { suitFor } from "./suitability";
 
 const wild = { volatility: 0.85, avgDailyValueKobo: 1e9, categories: ["speculative"], dividendYield: null };
 const steadyDiv = { volatility: 0.25, avgDailyValueKobo: 5e9, categories: ["large-cap", "dividend"], dividendYield: 0.07 };

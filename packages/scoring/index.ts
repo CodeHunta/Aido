@@ -1,4 +1,4 @@
-export { scoreStock, ENGINE_VERSION } from "./score_v1.js";
-export { suitFor } from "./suitability.js";
-export { analyzePortfolio, impactOfBuy } from "./portfolio.js";
-export type * from "./types.js";
+export { scoreStock, ENGINE_VERSION } from "./score_v1";
+export { suitFor } from "./suitability";
+export { analyzePortfolio, impactOfBuy } from "./portfolio";
+export type * from "./types";

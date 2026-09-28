@@ -5,8 +5,8 @@
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { db } from "./index.js";
-import { dividends, financials, pricesDaily, stocks } from "./schema.js";
+import { db } from "./index";
+import { dividends, financials, pricesDaily, stocks } from "./schema";
 
 const root = dirname(fileURLToPath(import.meta.url));
 const rows = readFileSync(join(root, "seed-data.csv"), "utf8").trim().split("\n").slice(1);

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { scoreStock } from "./score_v1.js";
-import type { StockInputs } from "./types.js";
+import { scoreStock } from "./score_v1";
+import type { StockInputs } from "./types";
 
 const base: StockInputs = {
   ticker: "TEST",

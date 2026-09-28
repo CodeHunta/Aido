@@ -1,5 +1,5 @@
 import engine from "./engine_v1.json";
-import type { Action, Confidence, FactorScores, ScoreResult, StockInputs } from "./types.js";
+import type { Action, Confidence, FactorScores, ScoreResult, StockInputs } from "./types";
 
 export const ENGINE_VERSION = "v1";
 const W = engine.weights;
