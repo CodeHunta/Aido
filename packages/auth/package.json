@@ -1,0 +1,17 @@
+{
+  "name": "@aido/auth",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "lint": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@aido/db": "workspace:*",
+    "better-auth": "^1.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "22.7.5",
+    "typescript": "^5.6.3"
+  }
+}

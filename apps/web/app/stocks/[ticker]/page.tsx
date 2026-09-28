@@ -1,6 +1,6 @@
-import { eq } from "drizzle-orm";
+import { desc, eq } from "@aido/db/drizzle";
 import { db } from "@aido/db";
-import { watchlists } from "@aido/db/schema";
+import { recommendations, watchlists } from "@aido/db/schema";
 import { getFinancial, getProfile, getThesis, getTraits, recentPrices } from "@aido/db/traits";
 import { suitFor } from "@aido/scoring";
 import { WatchButton } from "../../_actions";
@@ -18,6 +18,7 @@ export default async function StockPage({ params }: { params: { ticker: string }
     ? suitFor({ risk: profile.risk, horizon: profile.horizon, objective: profile.objective }, { volatility: t.volatility, avgDailyValueKobo: t.avgDailyValueKobo, categories: t.categories, dividendYield: t.dividendYield })
     : null;
   const [fin, thesis, prices] = await Promise.all([getFinancial(ticker), getThesis(ticker), recentPrices(ticker, 30)]);
+  const history = await db.select().from(recommendations).where(eq(recommendations.ticker, ticker)).orderBy(desc(recommendations.asOf)).limit(10);
   const watched = (await db.select().from(watchlists).where(eq(watchlists.userId, USER))).some((w) => w.ticker === ticker);
   const max = Math.max(...prices.map((p) => p.closeKobo ?? 0), 1);
 
@@ -76,6 +77,14 @@ export default async function StockPage({ params }: { params: { ticker: string }
           {suitability && <p style={{ fontSize: 13 }}><strong>Why for you:</strong> {suitability.reasons.join("; ")}</p>}
         </Card>
       </div>
+      <Card>
+        <div style={{ marginTop: 8 }}>
+          <h3>Recommendation history</h3>
+          <table className="grid"><thead><tr><th>Date</th><th>Action</th><th>Score</th><th>Engine</th></tr></thead>
+            <tbody>{history.map((h) => <tr key={h.id}><td className="num">{new Date(h.asOf).toLocaleDateString()}</td><td><ActionBadge action={h.action} /></td><td className="num">{h.score}</td><td>{h.engineVersion}</td></tr>)}</tbody>
+          </table>
+        </div>
+      </Card>
     </main>
   );
 }

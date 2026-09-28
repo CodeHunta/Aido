@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq } from "@aido/db/drizzle";
 import { db } from "@aido/db";
 import { watchlists } from "@aido/db/schema";
 import { getTraits } from "@aido/db/traits";
@@ -7,7 +7,7 @@ import { bad, ok, userOf } from "../_lib";
 export const dynamic = "force-dynamic";
 
 export async function GET(req: Request) {
-  const userId = userOf(req);
+  const userId = await userOf(req);
   const rows = await db.select().from(watchlists).where(eq(watchlists.userId, userId));
   const out = [];
   for (const w of rows) {
@@ -18,7 +18,7 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  const userId = userOf(req);
+  const userId = await userOf(req);
   const body = (await req.json().catch(() => null)) as { ticker?: string } | null;
   if (!body?.ticker) return bad("Need ticker");
   const ticker = body.ticker.toUpperCase();
@@ -29,7 +29,7 @@ export async function POST(req: Request) {
 }
 
 export async function DELETE(req: Request) {
-  const userId = userOf(req);
+  const userId = await userOf(req);
   const ticker = (new URL(req.url).searchParams.get("ticker") ?? "").toUpperCase();
   if (!ticker) return bad("Need ?ticker=");
   await db.delete(watchlists).where(and(eq(watchlists.userId, userId), eq(watchlists.ticker, ticker)));

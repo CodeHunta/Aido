@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq } from "@aido/db/drizzle";
 import { db } from "@aido/db";
 import { portfolios } from "@aido/db/schema";
 import { getTraits } from "@aido/db/traits";

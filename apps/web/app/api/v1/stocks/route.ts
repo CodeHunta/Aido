@@ -9,7 +9,7 @@ export async function GET(req: Request) {
   const sort = url.searchParams.get("sort") ?? "score";
   const category = url.searchParams.get("category");
   const q = (url.searchParams.get("q") ?? "").toLowerCase();
-  const profile = await getProfile(userOf(req));
+  const profile = await getProfile(await userOf(req));
 
   const out = [];
   for (const ticker of await listTickers()) {

@@ -30,6 +30,8 @@ export function Nav() {
     ["Portfolio", "/portfolio"],
     ["Watchlist", "/watchlist"],
     ["Picks", "/picks"],
+    ["Premium", "/premium"],
+    ["Log in", "/login"],
   ];
   return (
     <nav style={{ display: "flex", gap: 16, padding: "12px 0", borderBottom: "1px solid var(--border)", marginBottom: 24, flexWrap: "wrap" }}>

@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq } from "@aido/db/drizzle";
 import { db } from "@aido/db";
 import { investorProfiles } from "@aido/db/schema";
 import { getProfile } from "@aido/db/traits";
@@ -7,12 +7,12 @@ import { bad, ok, userOf } from "../../_lib";
 export const dynamic = "force-dynamic";
 
 export async function GET(req: Request) {
-  const p = await getProfile(userOf(req));
+  const p = await getProfile(await userOf(req));
   return p ? ok(p) : bad("No profile yet", 404);
 }
 
 export async function PUT(req: Request) {
-  const userId = userOf(req);
+  const userId = await userOf(req);
   const body = (await req.json().catch(() => null)) as Partial<{
     risk: "conservative" | "moderate" | "aggressive";
     horizon: "short" | "medium" | "long";

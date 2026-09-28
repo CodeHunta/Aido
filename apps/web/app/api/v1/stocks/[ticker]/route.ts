@@ -8,7 +8,7 @@ export async function GET(req: Request, { params }: { params: { ticker: string }
   const ticker = decodeURIComponent(params.ticker).toUpperCase();
   const t = await getTraits(ticker);
   if (!t) return bad("Unknown ticker", 404);
-  const profile = await getProfile(userOf(req));
+  const profile = await getProfile(await userOf(req));
   const suitability = profile
     ? suitFor(
         { risk: profile.risk, horizon: profile.horizon, objective: profile.objective },

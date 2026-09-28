@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 // Live computation until the Sunday scheduler (Phase 7) persists weekly_picks.
 export async function GET(req: Request) {
-  const profile = await getProfile(userOf(req));
+  const profile = await getProfile(await userOf(req));
   const scored: { ticker: string; score: number; action: string | null; level: string | null }[] = [];
   for (const ticker of await listTickers()) {
     const t = await getTraits(ticker);

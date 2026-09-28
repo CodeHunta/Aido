@@ -9,7 +9,12 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        {children}
+        <footer style={{ maxWidth: 960, margin: "32px auto 0", padding: "16px", fontSize: 12, color: "var(--muted)", borderTop: "1px solid var(--border)" }}>
+          Aido is educational investment intelligence, not financial advice. <a href="/methodology">How Aido thinks →</a>
+        </footer>
+      </body>
     </html>
   );
 }

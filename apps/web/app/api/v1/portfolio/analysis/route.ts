@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq } from "@aido/db/drizzle";
 import { db } from "@aido/db";
 import { portfolios } from "@aido/db/schema";
 import { getTraits } from "@aido/db/traits";
@@ -8,7 +8,7 @@ import { ok, userOf } from "../../_lib";
 export const dynamic = "force-dynamic";
 
 export async function GET(req: Request) {
-  const userId = userOf(req);
+  const userId = await userOf(req);
   const held = await db.select().from(portfolios).where(eq(portfolios.userId, userId));
   const inputs = [];
   for (const h of held) {
