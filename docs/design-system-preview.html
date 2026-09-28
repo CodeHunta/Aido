@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en" class="light">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Aido DS v0.1 — Preview</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = { darkMode: 'class', theme: { extend: {
+  colors: { buy:'#16a34a', hold:'#d97706', sell:'#dc2626', watch:'#2563eb', ink:'#0f172a' },
+  borderRadius: { xl2:'16px' }, fontFamily: { sans:['Inter','system-ui','sans-serif'] }
+}}};
+function toggleDark(){ document.documentElement.classList.toggle('dark'); }
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>body{font-family:Inter,system-ui} .num{font-variant-numeric:tabular-nums} .card{border-radius:16px}</style>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen">
+<div class="max-w-5xl mx-auto px-4 py-8 space-y-10">
+
+<div class="flex items-center justify-between">
+<div><h1 class="text-2xl font-800 font-extrabold tracking-tight">Aido DS v0.1 — Preview</h1>
+<p class="text-sm text-slate-500 dark:text-slate-400">Tokens + components for Next.js (shadcn/ui) mirrored in Expo NativeWind. Light/dark ready.</p></div>
+<button onclick="toggleDark()" class="px-4 py-2 rounded-xl border text-sm font-semibold bg-white dark:bg-slate-900">Toggle dark</button>
+</div>
+
+<!-- TOKENS -->
+<section class="grid md:grid-cols-3 gap-4">
+<div class="card bg-white dark:bg-slate-900 border p-5"><h2 class="font-bold mb-3 text-sm uppercase tracking-wide">Semantic actions</h2>
+<div class="flex flex-wrap gap-2 text-xs font-bold">
+<span class="px-3 py-1.5 rounded-full bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300">BUY</span>
+<span class="px-3 py-1.5 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300">HOLD</span>
+<span class="px-3 py-1.5 rounded-full bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300">SELL</span>
+<span class="px-3 py-1.5 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300">WATCH</span>
+<span class="px-3 py-1.5 rounded-full bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300">NO SIGNAL</span>
+</div>
+<div class="mt-4 space-y-2 text-sm"><div class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-green-600"></span> buy #16a34a</div>
+<div class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-amber-600"></span> hold #d97706</div>
+<div class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-red-600"></span> sell #dc2626</div>
+<div class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-blue-600"></span> watch #2563eb</div></div></div>
+
+<div class="card bg-white dark:bg-slate-900 border p-5"><h2 class="font-bold mb-3 text-sm uppercase tracking-wide">Risk + confidence</h2>
+<div class="flex gap-2 text-xs font-bold"><span class="px-3 py-1.5 rounded-full bg-red-50 border border-red-200 text-red-700">High risk</span><span class="px-3 py-1.5 rounded-full bg-amber-50 border border-amber-200 text-amber-700">Med</span><span class="px-3 py-1.5 rounded-full bg-green-50 border border-green-200 text-green-700">Low</span></div>
+<div class="mt-3 flex gap-2 text-xs"><span class="px-2.5 py-1 rounded-md bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-bold">High confidence</span><span class="px-2.5 py-1 rounded-md border font-semibold">Med</span><span class="px-2.5 py-1 rounded-md border opacity-60">Low</span></div>
+<p class="mt-4 text-xs text-slate-500">Radius 8/12/16/20 • 4pt grid • min 14sp body • tabular-nums for ₦</p>
+<h3 class="mt-3 font-extrabold text-xl">Display ₦1,245.50 <span class="text-sm font-medium text-green-600">+2.4%</span></h3>
+<p class="text-sm text-slate-500">Body / Caption / Numeric</p></div>
+
+<div class="card bg-white dark:bg-slate-900 border p-5"><h2 class="font-bold mb-3 text-sm uppercase tracking-wide">Score ring</h2>
+<div class="flex items-center gap-5">
+<svg width="96" height="96" viewBox="0 0 96 96"><circle cx="48" cy="48" r="40" fill="none" stroke-width="10" class="stroke-slate-200 dark:stroke-slate-800"/><circle cx="48" cy="48" r="40" fill="none" stroke="#16a34a" stroke-width="10" stroke-linecap="round" stroke-dasharray="251.3" stroke-dashoffset="45" transform="rotate(-90 48 48)"/><text x="48" y="52" text-anchor="middle" font-weight="800" font-size="20" class="fill-slate-900 dark:fill-white">82</text><text x="48" y="66" text-anchor="middle" font-size="10" fill="gray">/100</text></svg>
+<div class="text-sm space-y-1"><div class="font-bold">82/100 • High</div><div class="text-slate-500">≥75 BUY • 65–74 WATCH<br/>50–64 HOLD • &lt;40 SELL</div></div>
+</div></div>
+</section>
+
+<!-- RECOMMENDATION CARD -->
+<section>
+<h2 class="font-bold mb-3">Canonical Recommendation Card (PRD §10)</h2>
+<div class="grid md:grid-cols-2 gap-4">
+<div class="card bg-white dark:bg-slate-900 border p-5 shadow-sm">
+<div class="flex items-center justify-between"><span class="px-3 py-1.5 rounded-full bg-green-600 text-white text-xs font-extrabold">BUY</span><button class="text-xs font-semibold border rounded-full px-3 py-1.5">+ Watch</button></div>
+<div class="mt-3 flex items-center gap-4">
+<svg width="72" height="72" viewBox="0 0 96 96"><circle cx="48" cy="48" r="40" fill="none" stroke-width="12" class="stroke-slate-200 dark:stroke-slate-800"/><circle cx="48" cy="48" r="40" fill="none" stroke="#16a34a" stroke-width="12" stroke-linecap="round" stroke-dasharray="251.3" stroke-dashoffset="45" transform="rotate(-90 48 48)"/><text x="48" y="55" text-anchor="middle" font-weight="800" font-size="22" class="fill-slate-900 dark:fill-white">82</text></svg>
+<div><div class="font-extrabold">GTCO Plc <span class="font-medium text-slate-500">GTCO</span></div><div class="text-xs text-slate-500">Confidence: <b class="text-slate-800 dark:text-slate-200">High</b> • Data as of 27 Sep 2026</div><div class="mt-1 text-xs"><span class="px-2 py-0.5 rounded-full bg-green-100 text-green-800 font-bold">Suitability: High</span> <span class="text-slate-500">• Portfolio fit: High</span></div></div>
+</div>
+<div class="mt-4 text-sm"><div class="font-bold text-xs uppercase tracking-wide text-slate-500 mb-1">Why Aido recommends it</div><ul class="space-y-1"><li>• Earnings accelerating (+18% YoY)</li><li>• Valuation reasonable (P/E 6.2x vs 5y 7.1x)</li><li>• ROE improving, low leverage</li></ul>
+<div class="mt-3 text-sm bg-red-50 dark:bg-red-950/40 border border-red-100 dark:border-red-900 rounded-xl p-3"><b>Key risk:</b> Financial-sector concentration + rate sensitivity.</div>
+<div class="mt-3 grid grid-cols-4 gap-2 text-center text-xs num"><div class="border rounded-xl p-2"><div class="font-bold">6.2x</div><div class="text-slate-500">P/E</div></div><div class="border rounded-xl p-2"><div class="font-bold">7.8%</div><div class="text-slate-500">Yield</div></div><div class="border rounded-xl p-2"><div class="font-bold">+12%</div><div class="text-slate-500">6m</div></div><div class="border rounded-xl p-2"><div class="font-bold">24%</div><div class="text-slate-500">ROE</div></div></div>
+<button class="mt-4 w-full py-3 rounded-xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-bold text-sm">View Analysis →</button>
+<p class="mt-2 text-[11px] text-slate-500">Why? Why now? Why for me? What could go wrong? ↓</p></div>
+</div>
+
+<div class="space-y-4">
+<div class="card bg-white dark:bg-slate-900 border p-5">
+<div class="flex items-center justify-between"><span class="px-3 py-1.5 rounded-full bg-amber-100 text-amber-800 text-xs font-extrabold">HOLD</span><span class="text-xs text-slate-500">Confidence: Med</span></div>
+<div class="mt-2 font-bold">Dangote Cement <span class="text-slate-500 font-medium">DANGCEM • 68/100</span></div>
+<p class="text-sm text-slate-500">Great company, expensive price. <span class="px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-800 text-xs font-bold">Outside Your Profile</span></p>
+<div class="mt-3 h-2 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden flex"><div class="bg-blue-600" style="width:42%"></div><div class="bg-slate-400" style="width:23%"></div><div class="bg-amber-500" style="width:35%"></div></div>
+<p class="text-xs mt-1 text-slate-500">Financials 18% → 24% if added • Top holding 27% — concentration flag</p>
+</div>
+<div class="card border p-5 bg-slate-900 text-white dark:bg-white dark:text-slate-900">
+<div class="text-xs font-bold opacity-70">YOUR AIDO PICK IS IN 🎯 — push / email preview</div>
+<div class="font-extrabold mt-1">GTCO Plc — BUY • 82/100 • High</div>
+<div class="text-sm opacity-80">Strong growth + reasonable valuation.</div>
+<div class="mt-2 text-sm font-bold underline">View recommendation →</div>
+</div>
+<div class="card bg-white dark:bg-slate-900 border border-dashed p-5 text-center text-sm text-slate-500">Empty watchlist — “No strong opportunity this week.” is a valid state, not a failure.</div>
+</div>
+</div>
+</section>
+
+<!-- DASHBOARD STRIP -->
+<section>
+<h2 class="font-bold mb-3">Dashboard strip (mobile 360px → web responsive)</h2>
+<div class="grid md:grid-cols-4 gap-4 text-sm">
+<div class="card bg-white dark:bg-slate-900 border p-4"><div class="text-xs text-slate-500 font-bold uppercase">Portfolio</div><div class="font-extrabold text-lg num">₦2,450,000 <span class="text-green-600 text-xs">+8.2%</span></div><div class="text-xs text-slate-500">Banks 42% • Cement 23% • Div yield 5.1%</div></div>
+<div class="card bg-white dark:bg-slate-900 border p-4"><div class="text-xs text-slate-500 font-bold uppercase">Your Aido Pick</div><div class="font-extrabold">GTCO — BUY 82</div><div class="text-xs text-slate-500">Fits growth + monthly profile</div></div>
+<div class="card bg-white dark:bg-slate-900 border p-4"><div class="text-xs text-slate-500 font-bold uppercase">Market Pick</div><div class="font-extrabold">SEPLAT — 87</div><div class="text-xs text-slate-500">One NGX stock to watch</div></div>
+<div class="card bg-white dark:bg-slate-900 border p-4"><div class="text-xs text-slate-500 font-bold uppercase">Alerts</div><div class="font-bold">GTCO WATCH → BUY</div><div class="text-xs text-slate-500">Valuation improved • 2h ago</div></div>
+</div>
+</section>
+
+<p class="text-xs text-slate-500 pb-8">Next: port these exact tokens/props to <code>apps/web</code> (shadcn/ui) + <code>apps/mobile</code> (NativeWind). Open this file directly in a browser; no build needed.</p>
+</div>
+</body>
+</html>
