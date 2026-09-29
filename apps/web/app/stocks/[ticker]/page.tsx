@@ -29,7 +29,7 @@ export default async function StockPage({ params }: { params: { ticker: string }
         <h1 style={{ fontSize: 28, fontWeight: 800, margin: 0 }}>{t.name} <span style={{ color: "var(--muted)", fontSize: 16 }}>{t.ticker}</span></h1>
         <WatchButton ticker={ticker} watched={watched} userId={USER} />
       </div>
-      <p style={{ color: "var(--muted)", fontSize: 13 }}>{t.sector} · {t.categories.join(" · ")} · Data as of {t.asOf}</p>
+      <p style={{ color: "var(--muted)", fontSize: 13 }}>{t.sector} · {t.categories.join(" · ")} · {t.source === "ngx-delayed" ? "NGX delayed" : "Sample"} data as of {t.asOf}</p>
       <Card>
         <div style={{ display: "flex", gap: 20, alignItems: "center", flexWrap: "wrap" }}>
           <ScoreRing score={t.score} />

@@ -25,6 +25,7 @@ export interface StockTraits {
   categories: string[];
   closeKobo: number | null;
   asOf: string | null;
+  source: string | null;
   volatility: number | null;
   avgDailyValueKobo: number | null;
   dividendYield: number | null;
@@ -46,7 +47,8 @@ export async function getTraits(ticker: string): Promise<StockTraits | null> {
     await db.select().from(recommendations).where(eq(recommendations.ticker, ticker)).orderBy(desc(recommendations.asOf)).limit(1)
   )[0];
   const last = closes[closes.length - 1] ?? null;
-  const lastDate = px[px.length - 1]?.date ?? null;
+  const lastRow = px[px.length - 1];
+  const lastDate = lastRow?.date ?? null;
   return {
     ticker: s.ticker,
     name: s.name,
@@ -54,6 +56,7 @@ export async function getTraits(ticker: string): Promise<StockTraits | null> {
     categories: s.categories,
     closeKobo: last,
     asOf: lastDate,
+    source: lastRow?.source ?? null,
     volatility: rets.length > 5 ? stdev(rets) * Math.sqrt(252) : null,
     avgDailyValueKobo:
       closes.length > 0 ? px.reduce((a, p, k) => a + Number(p.volume ?? 0) * (closes[k] ?? 0), 0) / px.length : null,

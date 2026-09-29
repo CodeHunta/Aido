@@ -46,9 +46,9 @@ pnpm --filter @aido/worker weekly   # market + personal picks, alerts
 powershell -File infra/backup.ps1   # back up first, always
 ```
 
-Data honesty: closes are real NGX delayed prices for 39 stocks (mapped to
-official symbols; BERGER corrected to JBERGER). WAPCO, FLOURMILL and MRS
-delisted — they keep clearly-marked sample data. History before the first
+Data honesty: closes are real NGX delayed prices for all 146 listed equities
+(auto-imported with official symbols, sectors, volumes and trade dates).
+WAPCO, FLOURMILL and MRS delisted — they keep clearly-marked sample data. History before the first
 live fetch is sample shape rescaled to meet the first real close (one-time
 splice, returns untouched); financials/dividends are still sample until
 company-statement ingestion lands. Every price row carries its source.
