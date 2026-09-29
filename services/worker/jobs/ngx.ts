@@ -87,7 +87,57 @@ export interface FeedRow {
   TradeDate: string | null;
 }
 
+const TAPE_URL = "https://ngxgroup.com/exchange/data/equities-price-list/";
+
 const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36";
+
+async function downloadTape(retries = 3): Promise<string> {
+  let last: unknown = null;
+  for (let i = 0; i < retries; i++) {
+    try {
+      const ctl = new AbortController();
+      const t = setTimeout(() => ctl.abort(), 60000);
+      const res = await fetch(TAPE_URL, { headers: { "user-agent": UA }, signal: ctl.signal });
+      clearTimeout(t);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return await res.text();
+    } catch (e) {
+      last = e;
+      await new Promise((r) => setTimeout(r, 3000 * (i + 1)));
+    }
+  }
+  throw last;
+}
+
+// Traded funds on the tape (no JSON feed). Kept as real price rows.
+const ETF_LIST = ["NEWGOLD", "GREENWETF", "SIAMLETF40", "LOTUSHAL15", "STANBICETF30", "VETBANK", "VETGOODS", "VETGRIF30", "VETINDETF", "VSPBONDETF", "MERGROWTH", "MERVALUE"];
+
+async function importEtfs(date: string): Promise<number> {
+  let html = "";
+  try {
+    html = await downloadTape();
+  } catch {
+    console.log("[ngx] tape unreachable — ETFs skipped this run");
+    return 0;
+  }
+  const found = parsePriceList(html);
+  let n = 0;
+  for (const sym of ETF_LIST) {
+    const q = found.get(sym);
+    if (!q) continue;
+    const kobo = Math.round(q.priceNaira * 100);
+    await db
+      .insert(stocks)
+      .values({ ticker: sym, name: sym, sector: "Investment", categories: [], ngxSymbol: sym, asset: "etf" })
+      .onConflictDoNothing();
+    await db
+      .insert(pricesDaily)
+      .values({ ticker: sym, date, openKobo: kobo, highKobo: kobo, lowKobo: kobo, closeKobo: kobo, volume: 0, marketCapKobo: null, source: "ngx-delayed" })
+      .onConflictDoNothing();
+    n++;
+  }
+  return n;
+}
 
 export async function fetchFeed(): Promise<FeedRow[]> {
   const all: FeedRow[] = [];
@@ -190,9 +240,10 @@ async function main() {
         .onConflictDoNothing();
       updated++;
     } else {
+      const isReit = (r.Market ?? "").toLowerCase().includes("real estate");
       await db
         .insert(stocks)
-        .values({ ticker: r.Symbol, name: (r.Company2 ?? r.Symbol).trim() || r.Symbol, sector: sectorOf(r.Sector), categories: [], ngxSymbol: r.Symbol })
+        .values({ ticker: r.Symbol, name: (r.Company2 ?? r.Symbol).trim() || r.Symbol, sector: sectorOf(r.Sector), categories: [], ngxSymbol: r.Symbol, asset: isReit ? "reit" : "stock" })
         .onConflictDoNothing();
       await db
         .insert(pricesDaily)
@@ -212,6 +263,8 @@ async function main() {
     }
   }
   console.log(`[ngx] date=${date} updated=${updated} added=${added}`);
+  const etfs = await importEtfs(date);
+  console.log(`[ngx] etfs=${etfs}`);
   console.log("[ngx] unmapped (delisted, sample data kept): WAPCO, FLOURMILL, MRS");
 }
 

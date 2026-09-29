@@ -23,6 +23,7 @@ export interface StockTraits {
   name: string;
   sector: string;
   categories: string[];
+  asset: string;
   closeKobo: number | null;
   asOf: string | null;
   source: string | null;
@@ -54,6 +55,7 @@ export async function getTraits(ticker: string): Promise<StockTraits | null> {
     name: s.name,
     sector: s.sector,
     categories: s.categories,
+    asset: s.asset,
     closeKobo: last,
     asOf: lastDate,
     source: lastRow?.source ?? null,

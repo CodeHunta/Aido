@@ -28,8 +28,9 @@ export default async function Portfolio() {
         <Card><div style={{ fontSize: 12, color: "var(--muted)", fontWeight: 800 }}>DIVIDEND YIELD</div><div className="num" style={{ fontSize: 22, fontWeight: 800 }}>{(a.dividendYield * 100).toFixed(1)}%</div></Card>
       </div>
       <Card>
-        <table className="grid">
-          <thead><tr><th>Stock</th><th>Qty</th><th>Avg cost</th><th>Price</th><th>Value</th><th></th></tr></thead>
+        <table className="tbl">
+          <colgroup><col style={{ width: "20%" }} /><col style={{ width: "13%" }} /><col style={{ width: "16%" }} /><col style={{ width: "16%" }} /><col style={{ width: "19%" }} /><col style={{ width: "16%" }} /></colgroup>
+          <thead><tr><th>Stock</th><th className="num">Qty</th><th className="num">Avg cost</th><th className="num">Price</th><th className="num">Value</th><th></th></tr></thead>
           <tbody>
             {inputs.map((h) => (
               <tr key={h.ticker}>

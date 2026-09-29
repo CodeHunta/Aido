@@ -10,7 +10,7 @@ const API =
   (Constants.expoConfig?.extra as { apiUrl?: string } | undefined)?.apiUrl ??
   "http://localhost:3000/api/v1";
 
-type Tab = "Discover" | "Picks" | "Portfolio" | "Watchlist";
+type Tab = "Explore" | "Picks" | "Portfolio" | "Watchlist";
 interface Stock {
   ticker: string;
   name: string;
@@ -37,7 +37,7 @@ function Row({ s, onOpen }: { s: Stock; onOpen: (t: string) => void }) {
 }
 
 export default function App() {
-  const [tab, setTab] = useState<Tab>("Discover");
+  const [tab, setTab] = useState<Tab>("Explore");
   const [stocks, setStocks] = useState<Stock[]>([]);
   const [open, setOpen] = useState<string | null>(null);
   const [detail, setDetail] = useState<{ ticker: string; score: number | null; action: string | null; why: string[]; keyRisk: string } | null>(null);
@@ -81,7 +81,7 @@ export default function App() {
         </>
       )}
       <View style={styles.tabs}>
-        {(["Discover", "Picks", "Portfolio", "Watchlist"] as Tab[]).map((t) => (
+        {(["Explore", "Picks", "Portfolio", "Watchlist"] as Tab[]).map((t) => (
           <Pressable key={t} onPress={() => { setTab(t); setOpen(null); }} style={[styles.tab, tab === t && styles.tabOn]}>
             <Text style={tab === t ? styles.tabOnText : styles.tabText}>{t}</Text>
           </Pressable>

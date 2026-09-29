@@ -22,9 +22,10 @@ export default async function Watchlist() {
       <h1 style={{ fontSize: 28, fontWeight: 800 }}>Watchlist</h1>
       <p style={{ color: "var(--muted)", fontSize: 14 }}>Aido watches these and pings you only when something material changes.</p>
       <Card>
-        {out.length === 0 ? <p>No strong opportunity on your list — that is fine. <a href="/discover">Find stocks →</a></p> : (
-          <table className="grid">
-            <thead><tr><th>Stock</th><th>Price</th><th>Score</th><th>Action</th><th></th></tr></thead>
+        {out.length === 0 ? <p>No strong opportunity on your list — that is fine. <a href="/explore">Find stocks →</a></p> : (
+          <table className="tbl">
+            <colgroup><col style={{ width: "26%" }} /><col style={{ width: "17%" }} /><col style={{ width: "13%" }} /><col style={{ width: "24%" }} /><col style={{ width: "20%" }} /></colgroup>
+            <thead><tr><th>Stock</th><th className="num">Price</th><th className="num">Score</th><th>Action</th><th></th></tr></thead>
             <tbody>
               {out.map((t) => (
                 <tr key={t.ticker}>

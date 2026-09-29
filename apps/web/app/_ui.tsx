@@ -25,7 +25,7 @@ export function ScoreRing({ score }: { score: number | null }) {
 export function Nav() {
   const links = [
     ["Dashboard", "/"],
-    ["Discover", "/discover"],
+    ["Explore", "/explore"],
     ["Compare", "/compare"],
     ["Portfolio", "/portfolio"],
     ["Watchlist", "/watchlist"],

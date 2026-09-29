@@ -32,8 +32,9 @@ export default async function Compare({ searchParams }: { searchParams: { ticker
         <button className="btn" type="submit">Compare</button>
       </form>
       <Card>
-        <table className="grid">
-          <thead><tr><th>Fact</th>{cols.map(({ t }) => <th key={t.ticker}><a href={`/stocks/${t.ticker}`}>{t.ticker}</a></th>)}</tr></thead>
+        <table className="tbl">
+          <colgroup><col style={{ width: "30%" }} />{cols.map(({ t }) => <col key={t.ticker} style={{ width: `${70 / Math.max(1, cols.length)}%` }} />)}</colgroup>
+          <thead><tr><th>Fact</th>{cols.map(({ t }) => <th key={t.ticker} className="num"><a href={`/stocks/${t.ticker}`}>{t.ticker}</a></th>)}</tr></thead>
           <tbody>
             {FACTS.map(([label, fn]) => (
               <tr key={label}>

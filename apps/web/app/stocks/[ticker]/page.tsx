@@ -56,7 +56,7 @@ export default async function StockPage({ params }: { params: { ticker: string }
         </Card>
         <Card>
           <h3>Numbers</h3>
-          <table className="grid"><tbody>
+          <table className="tbl"><colgroup><col style={{ width: "50%" }} /><col style={{ width: "50%" }} /></colgroup><tbody>
             <tr><td>ROE</td><td className="num">{fin?.roe != null ? `${(Number(fin.roe) * 100).toFixed(1)}%` : "—"}</td></tr>
             <tr><td>Margin</td><td className="num">{fin?.profitMargin != null ? `${(Number(fin.profitMargin) * 100).toFixed(1)}%` : "—"}</td></tr>
             <tr><td>D/E</td><td className="num">{fin?.debtToEquity ?? "—"}</td></tr>
@@ -80,7 +80,7 @@ export default async function StockPage({ params }: { params: { ticker: string }
       <Card>
         <div style={{ marginTop: 8 }}>
           <h3>Recommendation history</h3>
-          <table className="grid"><thead><tr><th>Date</th><th>Action</th><th>Score</th><th>Engine</th></tr></thead>
+          <table className="tbl"><colgroup><col style={{ width: "28%" }} /><col style={{ width: "26%" }} /><col style={{ width: "20%" }} /><col style={{ width: "26%" }} /></colgroup><thead><tr><th>Date</th><th>Action</th><th className="num">Score</th><th>Engine</th></tr></thead>
             <tbody>{history.map((h) => <tr key={h.id}><td className="num">{new Date(h.asOf).toLocaleDateString()}</td><td><ActionBadge action={h.action} /></td><td className="num">{h.score}</td><td>{h.engineVersion}</td></tr>)}</tbody>
           </table>
         </div>

@@ -48,6 +48,7 @@ export const stocks = pgTable("stocks", {
   categories: text("categories").array().notNull().default([]),
   status: text("status").notNull().default("active"),
   ngxSymbol: text("ngx_symbol"),
+  asset: text("asset").notNull().default("stock"),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
