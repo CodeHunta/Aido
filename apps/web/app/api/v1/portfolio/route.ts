@@ -19,19 +19,29 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   const userId = await userOf(req);
   const body = (await req.json().catch(() => null)) as { ticker?: string; qty?: number; avgCostKobo?: number } | null;
-  if (!body?.ticker || !body.qty || body.qty <= 0 || body.avgCostKobo == null || body.avgCostKobo < 0) {
-    return bad("Need ticker, qty (>0), avgCostKobo (>=0)");
+  if (!body?.ticker || !body.qty || body.qty === 0 || body.avgCostKobo == null || body.avgCostKobo < 0) {
+    return bad("Need ticker, qty (not 0 — negative sells), avgCostKobo (>=0)");
   }
   const ticker = body.ticker.toUpperCase();
   const t = await getTraits(ticker);
   if (!t) return bad("Unknown ticker", 404);
-  const existing = await db.select().from(portfolios).where(and(eq(portfolios.userId, userId), eq(portfolios.ticker, ticker)));
-  if (existing.length > 0) {
-    await db.update(portfolios).set({ qty: body.qty, avgCostKobo: body.avgCostKobo }).where(and(eq(portfolios.userId, userId), eq(portfolios.ticker, ticker)));
-    return ok({ updated: ticker });
+  const existing = (await db.select().from(portfolios).where(and(eq(portfolios.userId, userId), eq(portfolios.ticker, ticker))))[0];
+  if (!existing) {
+    if (body.qty < 0) return bad("You don't hold this stock yet — can't sell");
+    await db.insert(portfolios).values({ userId, ticker, qty: body.qty, avgCostKobo: body.avgCostKobo });
+    return ok({ added: ticker, qty: body.qty, avgCostKobo: body.avgCostKobo });
   }
-  await db.insert(portfolios).values({ userId, ticker, qty: body.qty, avgCostKobo: body.avgCostKobo });
-  return ok({ added: ticker });
+  // Broker-style averaging: buys accumulate and re-average, sells reduce at same average.
+  const oldQty = Number(existing.qty);
+  const oldAvg = Number(existing.avgCostKobo);
+  const newQty = oldQty + body.qty;
+  if (newQty <= 0) {
+    await db.delete(portfolios).where(and(eq(portfolios.userId, userId), eq(portfolios.ticker, ticker)));
+    return ok({ soldAll: ticker });
+  }
+  const newAvg = body.qty > 0 ? Math.round((oldQty * oldAvg + body.qty * body.avgCostKobo) / newQty) : oldAvg;
+  await db.update(portfolios).set({ qty: newQty, avgCostKobo: newAvg }).where(and(eq(portfolios.userId, userId), eq(portfolios.ticker, ticker)));
+  return ok({ accumulated: ticker, qty: newQty, avgCostKobo: newAvg });
 }
 
 export async function DELETE(req: Request) {

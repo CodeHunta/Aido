@@ -1,4 +1,5 @@
 "use client";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export function WatchButton({ ticker, watched, userId }: { ticker: string; watched: boolean; userId: string }) {
@@ -15,6 +16,7 @@ export function WatchButton({ ticker, watched, userId }: { ticker: string; watch
 }
 
 export function HoldingForm({ userId }: { userId: string }) {
+  const router = useRouter();
   const [msg, setMsg] = useState("");
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -25,26 +27,37 @@ export function HoldingForm({ userId }: { userId: string }) {
       body: JSON.stringify({ ticker: String(fd.get("ticker")), qty: Number(fd.get("qty")), avgCostKobo: Math.round(Number(fd.get("price")) * 100) }),
     });
     const j = await r.json().catch(() => null);
-    setMsg(r.ok ? (j?.data?.updated ? "Updated. Refresh to see it." : "Added. Refresh to see it.") : `Failed: ${j?.error ?? "check ticker"}`);
+    if (!r.ok) {
+      setMsg(`Failed: ${j?.error ?? "check ticker"}`);
+      return;
+    }
+    const d = j?.data ?? {};
+    if (d.soldAll) setMsg(`Sold all ${d.soldAll}.`);
+    else if (d.accumulated) setMsg(`Now ${d.qty.toLocaleString()} units @ ₦${(d.avgCostKobo / 100).toLocaleString()}.`);
+    else setMsg(`Added ${d.added}.`);
+    e.currentTarget.reset();
+    router.refresh();
   }
   return (
-    <form onSubmit={submit} style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 12 }}>
+    <form onSubmit={submit} style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 12, alignItems: "center" }}>
       <input name="ticker" placeholder="TICKER" className="input" style={{ width: 110 }} required />
-      <input name="qty" placeholder="Qty" type="number" className="input" style={{ width: 90 }} required />
-      <input name="price" placeholder="Buy price ₦" type="number" step="0.01" className="input" style={{ width: 130 }} required />
-      <button className="btn" type="submit">Save holding</button>
+      <input name="qty" placeholder="+Qty buy / -Qty sell" type="number" className="input" style={{ width: 150 }} required />
+      <input name="price" placeholder="Price ₦" type="number" step="0.01" className="input" style={{ width: 130 }} required />
+      <button className="btn" type="submit">Save</button>
       <span style={{ fontSize: 13 }}>{msg}</span>
     </form>
   );
 }
 
 export function RemoveButton({ ticker, kind, userId }: { ticker: string; kind: "portfolio" | "watchlist"; userId: string }) {
-  const [gone, setGone] = useState(false);
-  if (gone) return <span style={{ fontSize: 13, color: "var(--muted)" }}>Removed — refresh</span>;
+  const router = useRouter();
+  const [busy, setBusy] = useState(false);
   async function remove() {
+    setBusy(true);
     const base = kind === "portfolio" ? "/api/v1/portfolio" : "/api/v1/watchlist";
     const r = await fetch(`${base}?user=${userId}&ticker=${ticker}`, { method: "DELETE" });
-    if (r.ok) setGone(true);
+    setBusy(false);
+    if (r.ok) router.refresh();
   }
-  return <button className="btn" onClick={remove}>Remove</button>;
+  return <button className="btn" onClick={remove} disabled={busy}>Remove</button>;
 }
