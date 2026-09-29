@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "tsx ./index.ts",
     "score": "tsx ./jobs/score.ts",
+    "ngx": "tsx ./jobs/ngx.ts",
+    "ngx:splice": "tsx ./jobs/splice.ts",
     "demo:phase5": "tsx ./jobs/demo5.ts",
     "weekly": "tsx ./jobs/weekly.ts",
     "lint": "tsc --noEmit"

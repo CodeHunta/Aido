@@ -47,6 +47,7 @@ export const stocks = pgTable("stocks", {
   industry: text("industry").notNull().default(""),
   categories: text("categories").array().notNull().default([]),
   status: text("status").notNull().default("active"),
+  ngxSymbol: text("ngx_symbol"),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
@@ -61,6 +62,7 @@ export const pricesDaily = pgTable(
     closeKobo: bigint("close_kobo", { mode: "number" }),
     volume: bigint("volume", { mode: "number" }),
     marketCapKobo: bigint("market_cap_kobo", { mode: "number" }),
+    source: text("source").notNull().default("seed-sample"),
   },
   (t) => [uniqueIndex("prices_daily_ticker_date").on(t.ticker, t.date)],
 );

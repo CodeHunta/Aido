@@ -36,14 +36,22 @@ and they scan your QR code.
 Track weekly: testers active, portfolios connected, pick clicks,
 watchlist adds, return visits, Premium interest.
 
-## 4. Sunday routine
+## 4. Sunday routine (also daily after close for fresh prices)
 
 ```powershell
 $env:DATABASE_URL = "postgres://aido:aido@localhost:5432/aido"
+pnpm --filter @aido/worker ngx       # live NGX closes (30-min delayed, official price list)
 pnpm --filter @aido/worker score    # refresh ratings
 pnpm --filter @aido/worker weekly   # market + personal picks, alerts
 powershell -File infra/backup.ps1   # back up first, always
 ```
+
+Data honesty: closes are real NGX delayed prices for 39 stocks (mapped to
+official symbols; BERGER corrected to JBERGER). WAPCO, FLOURMILL and MRS
+delisted — they keep clearly-marked sample data. History before the first
+live fetch is sample shape rescaled to meet the first real close (one-time
+splice, returns untouched); financials/dividends are still sample until
+company-statement ingestion lands. Every price row carries its source.
 
 ## 5. If something breaks (rollback)
 
