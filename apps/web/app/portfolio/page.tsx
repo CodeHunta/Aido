@@ -4,8 +4,9 @@ import { portfolios } from "@aido/db/schema";
 import { getTraits } from "@aido/db/traits";
 import { analyzePortfolio } from "@aido/scoring";
 import { HoldingForm, RemoveButton } from "../_actions";
-import { Card, Nav, naira } from "../_ui";
+import { Card, naira } from "../_ui";
 import { currentUserId } from "../lib/session";
+import { Nav } from "../_nav";
 
 export const dynamic = "force-dynamic";
 

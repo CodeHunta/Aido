@@ -1,8 +1,9 @@
 import { desc, eq } from "@aido/db/drizzle";
 import { db } from "@aido/db";
 import { alerts } from "@aido/db/schema";
-import { ActionBadge, Card, Nav } from "../_ui";
+import { ActionBadge, Card } from "../_ui";
 import { currentUserId } from "../lib/session";
+import { Nav } from "../_nav";
 
 export const dynamic = "force-dynamic";
 

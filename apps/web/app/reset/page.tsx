@@ -1,7 +1,8 @@
 "use client";
 import { useState } from "react";
 import { authClient } from "../lib/auth-client";
-import { Card, Nav } from "../_ui";
+import { Card } from "../_ui";
+import { PublicNav } from "../_nav_public";
 
 export default function Reset() {
   const [msg, setMsg] = useState("");
@@ -20,7 +21,7 @@ export default function Reset() {
   }
   return (
     <main style={{ maxWidth: 480, margin: "0 auto", padding: "24px 16px" }}>
-      <Nav />
+      <PublicNav />
       <h1 style={{ fontSize: 28, fontWeight: 800 }}>New password</h1>
       <Card>
         <form onSubmit={submit} style={{ display: "grid", gap: 10 }}>

@@ -3,8 +3,9 @@ import { db } from "@aido/db";
 import { watchlists } from "@aido/db/schema";
 import { getTraits } from "@aido/db/traits";
 import { RemoveButton } from "../_actions";
-import { ActionBadge, Card, Nav, naira } from "../_ui";
+import { ActionBadge, Card, naira } from "../_ui";
 import { currentUserId } from "../lib/session";
+import { Nav } from "../_nav";
 
 export const dynamic = "force-dynamic";
 

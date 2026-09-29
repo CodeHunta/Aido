@@ -1,6 +1,7 @@
 import { getProfile, getTraits, listTickers } from "@aido/db/traits";
 import { suitFor } from "@aido/scoring";
-import { ActionBadge, Card, Nav, ScoreRing } from "../_ui"; import { currentUserId } from "../lib/session";
+import { ActionBadge, Card, ScoreRing } from "../_ui"; import { currentUserId } from "../lib/session";
+import { Nav } from "../_nav";
 
 export const dynamic = "force-dynamic";
 const USER = await currentUserId();

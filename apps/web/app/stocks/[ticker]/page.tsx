@@ -4,7 +4,8 @@ import { recommendations, watchlists } from "@aido/db/schema";
 import { getFinancial, getProfile, getThesis, getTraits, recentPrices } from "@aido/db/traits";
 import { suitFor } from "@aido/scoring";
 import { WatchButton } from "../../_actions"; import { currentUserId } from "../../lib/session";
-import { ActionBadge, Card, Nav, ScoreRing, naira } from "../../_ui";
+import { ActionBadge, Card, ScoreRing, naira } from "../../_ui";
+import { Nav } from "../../_nav";
 
 export const dynamic = "force-dynamic";
 const USER = await currentUserId();

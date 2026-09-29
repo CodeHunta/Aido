@@ -1,5 +1,5 @@
 import { getProfile } from "@aido/db/traits";
-import { Nav } from "../_ui";
+import { Nav } from "../_nav";
 import { currentUserId } from "../lib/session";
 import ProfileEditor from "./_editor";
 

@@ -22,31 +22,6 @@ export function ScoreRing({ score }: { score: number | null }) {
   );
 }
 
-import DarkToggle from "./_theme";
-
-export function Nav() {
-  const links = [
-    ["Dashboard", "/"],
-    ["Explore", "/explore"],
-    ["Compare", "/compare"],
-    ["Portfolio", "/portfolio"],
-    ["Watchlist", "/watchlist"],
-    ["Picks", "/picks"],
-    ["Alerts", "/alerts"],
-    ["Premium", "/premium"],
-    ["Profile", "/profile"],
-    ["Log in", "/login"],
-  ];
-  return (
-    <nav style={{ display: "flex", gap: 16, padding: "12px 0", borderBottom: "1px solid var(--border)", marginBottom: 24, flexWrap: "wrap", alignItems: "center" }}>
-      {links.map(([label, href]) => (
-        <a key={href} href={href} style={{ fontWeight: 700, fontSize: 14 }}>{label}</a>
-      ))}
-      <DarkToggle />
-    </nav>
-  );
-}
-
 export function Card({ children }: { children: React.ReactNode }) {
   return <div style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 16, padding: 20 }}>{children}</div>;
 }

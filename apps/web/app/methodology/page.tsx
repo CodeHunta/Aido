@@ -1,4 +1,5 @@
-import { Card, Nav } from "../_ui";
+import { Card } from "../_ui";
+import { Nav } from "../_nav";
 
 export default function Methodology() {
   return (

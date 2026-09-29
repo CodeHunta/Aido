@@ -1,5 +1,6 @@
 import { getFinancial, getTraits } from "@aido/db/traits";
-import { ActionBadge, Card, Nav, naira } from "../_ui";
+import { ActionBadge, Card, naira } from "../_ui";
+import { Nav } from "../_nav";
 
 export const dynamic = "force-dynamic";
 interface CmpT { score: number | null; dividendYield: number | null; volatility: number | null; closeKobo: number | null; }

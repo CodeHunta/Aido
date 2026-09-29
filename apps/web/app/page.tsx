@@ -3,8 +3,9 @@ import { db } from "@aido/db";
 import { portfolios, watchlists } from "@aido/db/schema";
 import { getProfile, getTraits, listTickers } from "@aido/db/traits";
 import { analyzePortfolio, suitFor } from "@aido/scoring";
-import { ActionBadge, Card, Nav, ScoreRing, naira } from "./_ui";
+import { ActionBadge, Card, ScoreRing, naira } from "./_ui";
 import { currentUserId } from "./lib/session";
+import { Nav } from "./_nav";
 
 export const dynamic = "force-dynamic";
 

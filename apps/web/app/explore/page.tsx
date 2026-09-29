@@ -1,7 +1,8 @@
 import { getProfile, getTraits, listTickers } from "@aido/db/traits";
 import { suitFor } from "@aido/scoring";
-import { ActionBadge, Card, Nav, naira } from "../_ui";
+import { ActionBadge, Card, naira } from "../_ui";
 import { currentUserId } from "../lib/session";
+import { Nav } from "../_nav";
 
 export const dynamic = "force-dynamic";
 const CATS = ["large-cap", "growth", "dividend", "value", "high-risk", "turnaround", "speculative"];

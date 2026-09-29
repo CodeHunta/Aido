@@ -1,16 +1,16 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { auth } from "@aido/auth/auth";
 
 // Private pages need an account. Explore, stock pages, methodology and
 // login/signup stay public so links can be shared.
-export async function middleware(req: NextRequest) {
-  try {
-    const session = await auth.api.getSession({ headers: req.headers });
-    if (session?.user) return NextResponse.next();
-  } catch {
-    // fall through to login
-  }
+//
+// NOTE: middleware runs on the Edge runtime where the Postgres driver cannot
+// run, so it only checks for the session COOKIE's presence. Every page and
+// API route re-validates the session against the database (Node runtime),
+// so a forged cookie gets you nothing but a redirect back to login.
+export function middleware(req: NextRequest) {
+  const hasSession = req.cookies.getAll().some((c) => c.name.endsWith("better-auth.session_token"));
+  if (hasSession) return NextResponse.next();
   return NextResponse.redirect(new URL(`/login?next=${encodeURIComponent(req.nextUrl.pathname)}`, req.url));
 }
 

@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Card, Nav } from "../_ui";
+import { Card } from "../_ui";
+import { PublicNav } from "../_nav_public";
 
 export default function Premium() {
   const [plan, setPlan] = useState("…");
@@ -19,7 +20,7 @@ export default function Premium() {
   }
   return (
     <main style={{ maxWidth: 720, margin: "0 auto", padding: "24px 16px" }}>
-      <Nav />
+      <PublicNav />
       <h1 style={{ fontSize: 28, fontWeight: 800 }}>Premium</h1>
       <p>Your plan: <strong>{plan}</strong></p>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
