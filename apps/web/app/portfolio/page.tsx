@@ -5,11 +5,12 @@ import { getTraits } from "@aido/db/traits";
 import { analyzePortfolio } from "@aido/scoring";
 import { HoldingForm, RemoveButton } from "../_actions";
 import { Card, Nav, naira } from "../_ui";
+import { currentUserId } from "../lib/session";
 
 export const dynamic = "force-dynamic";
-const USER = "demo-moderate";
 
 export default async function Portfolio() {
+  const USER = await currentUserId();
   const held = await db.select().from(portfolios).where(eq(portfolios.userId, USER));
   const inputs = [];
   for (const h of held) {
@@ -37,12 +38,12 @@ export default async function Portfolio() {
                 <td className="num">{naira(h.avgCostKobo)}</td>
                 <td className="num">{naira(h.priceKobo)}</td>
                 <td className="num">{naira(h.qty * h.priceKobo)}</td>
-                <td><RemoveButton ticker={h.ticker} kind="portfolio" /></td>
+                <td><RemoveButton ticker={h.ticker} kind="portfolio" userId={USER} /></td>
               </tr>
             ))}
           </tbody>
         </table>
-        <HoldingForm />
+        <HoldingForm userId={USER} />
       </Card>
       <Card>
         <div style={{ marginTop: 16 }}><h3>Sectors</h3>

@@ -3,11 +3,11 @@ import { db } from "@aido/db";
 import { recommendations, watchlists } from "@aido/db/schema";
 import { getFinancial, getProfile, getThesis, getTraits, recentPrices } from "@aido/db/traits";
 import { suitFor } from "@aido/scoring";
-import { WatchButton } from "../../_actions";
+import { WatchButton } from "../../_actions"; import { currentUserId } from "../../lib/session";
 import { ActionBadge, Card, Nav, ScoreRing, naira } from "../../_ui";
 
 export const dynamic = "force-dynamic";
-const USER = "demo-moderate";
+const USER = await currentUserId();
 
 export default async function StockPage({ params }: { params: { ticker: string } }) {
   const ticker = decodeURIComponent(params.ticker).toUpperCase();
@@ -27,7 +27,7 @@ export default async function StockPage({ params }: { params: { ticker: string }
       <Nav />
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
         <h1 style={{ fontSize: 28, fontWeight: 800, margin: 0 }}>{t.name} <span style={{ color: "var(--muted)", fontSize: 16 }}>{t.ticker}</span></h1>
-        <WatchButton ticker={ticker} watched={watched} />
+        <WatchButton ticker={ticker} watched={watched} userId={USER} />
       </div>
       <p style={{ color: "var(--muted)", fontSize: 13 }}>{t.sector} · {t.categories.join(" · ")} · Data as of {t.asOf}</p>
       <Card>

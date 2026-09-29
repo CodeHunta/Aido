@@ -4,11 +4,12 @@ import { watchlists } from "@aido/db/schema";
 import { getTraits } from "@aido/db/traits";
 import { RemoveButton } from "../_actions";
 import { ActionBadge, Card, Nav, naira } from "../_ui";
+import { currentUserId } from "../lib/session";
 
 export const dynamic = "force-dynamic";
-const USER = "demo-moderate";
 
 export default async function Watchlist() {
+  const USER = await currentUserId();
   const rows = await db.select().from(watchlists).where(eq(watchlists.userId, USER));
   const out = [];
   for (const w of rows) {
@@ -31,7 +32,7 @@ export default async function Watchlist() {
                   <td className="num">{naira(t.closeKobo)}</td>
                   <td className="num"><strong>{t.score}</strong></td>
                   <td><ActionBadge action={t.action} /></td>
-                  <td><RemoveButton ticker={t.ticker} kind="watchlist" /></td>
+                  <td><RemoveButton ticker={t.ticker} kind="watchlist" userId={USER} /></td>
                 </tr>
               ))}
             </tbody>

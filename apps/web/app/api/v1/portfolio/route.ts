@@ -19,11 +19,18 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   const userId = await userOf(req);
   const body = (await req.json().catch(() => null)) as { ticker?: string; qty?: number; avgCostKobo?: number } | null;
-  if (!body?.ticker || !body.qty || body.avgCostKobo == null) return bad("Need ticker, qty, avgCostKobo");
+  if (!body?.ticker || !body.qty || body.qty <= 0 || body.avgCostKobo == null || body.avgCostKobo < 0) {
+    return bad("Need ticker, qty (>0), avgCostKobo (>=0)");
+  }
   const ticker = body.ticker.toUpperCase();
   const t = await getTraits(ticker);
   if (!t) return bad("Unknown ticker", 404);
-  await db.insert(portfolios).values({ userId, ticker, qty: body.qty, avgCostKobo: body.avgCostKobo }).onConflictDoNothing();
+  const existing = await db.select().from(portfolios).where(and(eq(portfolios.userId, userId), eq(portfolios.ticker, ticker)));
+  if (existing.length > 0) {
+    await db.update(portfolios).set({ qty: body.qty, avgCostKobo: body.avgCostKobo }).where(and(eq(portfolios.userId, userId), eq(portfolios.ticker, ticker)));
+    return ok({ updated: ticker });
+  }
+  await db.insert(portfolios).values({ userId, ticker, qty: body.qty, avgCostKobo: body.avgCostKobo });
   return ok({ added: ticker });
 }
 
