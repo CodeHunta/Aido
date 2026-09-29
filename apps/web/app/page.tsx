@@ -55,11 +55,22 @@ export default async function Dashboard() {
           {market ? <div style={{ display: "flex", gap: 12, alignItems: "center", marginTop: 8 }}><ScoreRing score={market.score} /><div><ActionBadge action={market.action} /> <a href={`/stocks/${market.ticker}`} style={{ fontWeight: 800 }}>{market.ticker}</a></div></div> : <p>—</p>}
         </Card>
       </div>
-      {analysis.weaknesses.length > 0 && (
+      {held.length === 0 ? (
+        <Card>
+          <div style={{ marginTop: 16 }}>
+            <h3 style={{ marginTop: 0 }}>Welcome — let's set you up in 60 seconds</h3>
+            <ol style={{ fontSize: 14 }}>
+              <li><a href="/portfolio">Add a stock you own</a> (or one you're eyeing) — Aido values it live.</li>
+              <li><a href="/watchlist">Watch</a> anything interesting from <a href="/explore">Explore</a>.</li>
+              <li>Check back Sunday for <a href="/picks">your personal pick</a>.</li>
+            </ol>
+          </div>
+        </Card>
+      ) : analysis.weaknesses.length > 0 ? (
         <Card>
           <div style={{ marginTop: 16 }}><strong>Watch out:</strong><ul>{analysis.weaknesses.map((w) => <li key={w}>{w}</li>)}</ul></div>
         </Card>
-      )}
+      ) : null}
       <p style={{ fontSize: 12, color: "var(--muted)", marginTop: 16 }}>Profile: {profile ? `${profile.risk} · ${profile.horizon} · ${profile.objective}` : "none"} · <a href="/portfolio">Manage portfolio →</a></p>
     </main>
   );

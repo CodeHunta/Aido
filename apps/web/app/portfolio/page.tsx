@@ -22,6 +22,12 @@ export default async function Portfolio() {
     <main style={{ maxWidth: 960, margin: "0 auto", padding: "24px 16px" }}>
       <Nav />
       <h1 style={{ fontSize: 28, fontWeight: 800 }}>Portfolio</h1>
+      {inputs.length === 0 ? (
+        <Card>
+          <h3 style={{ marginTop: 0 }}>Nothing here yet — that's the fun part</h3>
+          <p style={{ fontSize: 14, color: "var(--muted)" }}>Record a stock you own (ticker, quantity, what you paid). Aido tracks its live value, gains, sector mix and warns you about concentration — automatically, from then on.</p>
+        </Card>
+      ) : null}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 16, margin: "12px 0" }}>
         <Card><div style={{ fontSize: 12, color: "var(--muted)", fontWeight: 800 }}>VALUE</div><div className="num" style={{ fontSize: 22, fontWeight: 800 }}>{naira(a.valueKobo)}</div></Card>
         <Card><div style={{ fontSize: 12, color: "var(--muted)", fontWeight: 800 }}>GAIN/LOSS</div><div className="num" style={{ fontSize: 22, fontWeight: 800, color: a.pnlKobo >= 0 ? "#16a34a" : "#dc2626" }}>{naira(a.pnlKobo)} ({(a.pnlPct * 100).toFixed(1)}%)</div></Card>

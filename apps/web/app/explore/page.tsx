@@ -96,6 +96,10 @@ export default async function Explore({ searchParams }: { searchParams: { q?: st
         <button className="btn" type="submit">Search</button>
       </form>
       <Card>
+        {slice.length === 0 ? (
+          <p style={{ color: "var(--muted)", fontSize: 14 }}>No matches. Try a shorter search, clear the style filter, or browse <a href="/explore">everything A–Z</a>.</p>
+        ) : (
+        <>
         <table className="tbl">
           <colgroup><col style={{ width: "34%" }} /><col style={{ width: "17%" }} /><col style={{ width: "12%" }} /><col style={{ width: "20%" }} /><col style={{ width: "17%" }} /></colgroup>
           <thead><tr><th>Stock</th><th className="num">Price</th><th className="num">Score</th><th>Action</th><th>Fit</th></tr></thead>
@@ -118,6 +122,8 @@ export default async function Explore({ searchParams }: { searchParams: { q?: st
             {safePage < pages ? <a className="btn" href={`/explore?${new URLSearchParams(pg(safePage + 1)).toString()}`}>Next →</a> : null}
           </span>
         </div>
+        </>
+        )}
       </Card>
     </main>
   );

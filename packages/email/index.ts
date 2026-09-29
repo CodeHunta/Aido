@@ -39,3 +39,7 @@ export function weeklyPickHtml(user: string, pick: { ticker: string; score: numb
 export function recChangeHtml(ticker: string, from: string, to: string, reason: string): string {
   return `<h2>Aido changed ${ticker}: ${from} → ${to}</h2><p>${reason}</p><p><a href="/stocks/${ticker}">See what changed →</a></p>`;
 }
+
+export function resetPasswordHtml(url: string): string {
+  return `<h2>Reset your Aido password</h2><p>Someone asked to reset this account's password. If that was you, choose a new one here:</p><p><a href="${url}">Set a new password →</a></p><p style="color:#888">Link expires in 1 hour. If it wasn't you, ignore this email.</p>`;
+}

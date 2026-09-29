@@ -10,4 +10,6 @@ export const authClient = createAuthClient() as unknown as {
   signUp: { email: (args: { email: string; password: string; name?: string }) => Promise<EmailResult> };
   signIn: { email: (args: { email: string; password: string }) => Promise<EmailResult> };
   signOut: () => Promise<unknown>;
+  forgetPassword: (args: { email: string; redirectTo?: string }) => Promise<EmailResult>;
+  resetPassword: (args: { newPassword: string; token: string }) => Promise<EmailResult>;
 };
