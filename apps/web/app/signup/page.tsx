@@ -14,7 +14,7 @@ export default function Signup() {
       name: String(fd.get("name") || ""),
     });
     if (r.error) setMsg(`Failed: ${r.error.message}`);
-    else window.location.href = "/";
+    else window.location.href = "/onboarding";
   }
   return (
     <main style={{ maxWidth: 480, margin: "0 auto", padding: "24px 16px" }}>
