@@ -20,7 +20,8 @@ export function HoldingForm({ userId }: { userId: string }) {
   const [msg, setMsg] = useState("");
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const fd = new FormData(e.currentTarget);
+    const form = e.currentTarget;
+    const fd = new FormData(form);
     const r = await fetch(`/api/v1/portfolio?user=${userId}`, {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -35,7 +36,7 @@ export function HoldingForm({ userId }: { userId: string }) {
     if (d.soldAll) setMsg(`Sold all ${d.soldAll}.`);
     else if (d.accumulated) setMsg(`Now ${d.qty.toLocaleString()} units @ ₦${(d.avgCostKobo / 100).toLocaleString()}.`);
     else setMsg(`Added ${d.added}.`);
-    e.currentTarget.reset();
+    form.reset();
     router.refresh();
   }
   return (

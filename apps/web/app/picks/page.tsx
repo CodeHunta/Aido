@@ -1,9 +1,9 @@
 import { getProfile, getTraits, listTickers } from "@aido/db/traits";
 import { suitFor } from "@aido/scoring";
-import { ActionBadge, Card, Nav, ScoreRing } from "../_ui";
+import { ActionBadge, Card, Nav, ScoreRing } from "../_ui"; import { currentUserId } from "../lib/session";
 
 export const dynamic = "force-dynamic";
-const USER = "demo-moderate";
+const USER = await currentUserId();
 
 export default async function Picks() {
   const profile = await getProfile(USER);

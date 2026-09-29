@@ -4,11 +4,12 @@ import { portfolios, watchlists } from "@aido/db/schema";
 import { getProfile, getTraits, listTickers } from "@aido/db/traits";
 import { analyzePortfolio, suitFor } from "@aido/scoring";
 import { ActionBadge, Card, Nav, ScoreRing, naira } from "./_ui";
+import { currentUserId } from "./lib/session";
 
 export const dynamic = "force-dynamic";
-const USER = "demo-moderate";
 
 export default async function Dashboard() {
+  const USER = await currentUserId();
   const profile = await getProfile(USER);
   const held = await db.select().from(portfolios).where(eq(portfolios.userId, USER));
   const watched = await db.select().from(watchlists).where(eq(watchlists.userId, USER));
