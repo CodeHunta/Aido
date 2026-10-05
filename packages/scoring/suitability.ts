@@ -62,7 +62,18 @@ export function suitFor(inv: InvestorTraits, s: StockTraits): SuitabilityResult 
   if (inv.objective === "growth" && turnaround && inv.risk !== "aggressive") {
     demote("med", "Growth goal, but this one is still proving itself");
   }
-  if (level === "high") hits.push("Fits risk, horizon and goal");
+  if (level === "high") {
+    // Same stock can top every list — the reason must still feel personal.
+    if (paysDiv && (inv.objective === "income" || inv.objective === "dividend" || inv.objective === "combination"))
+      hits.push(`Pays ${((s.dividendYield ?? 0) * 100).toFixed(1)}% — feeds your ${inv.objective} goal`);
+    else if (!volatile && !thin && (inv.risk === "conservative" || inv.objective === "preservation"))
+      hits.push("Steady price and easy to sell — suits a careful profile");
+    else if (inv.horizon === "long" && (inv.objective === "growth" || inv.objective === "combination"))
+      hits.push("Long horizon lets compounding do the heavy lifting");
+    else if (inv.horizon === "short" && !volatile && !thin)
+      hits.push("Liquid and steady enough for a short horizon");
+    else hits.push("Fits risk, horizon and goal");
+  }
 
   return { level, reasons: hits };
 }

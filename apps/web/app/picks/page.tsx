@@ -1,17 +1,15 @@
-import { getProfile, getTraits, listTickers } from "@aido/db/traits";
+import { getProfile, listTraits } from "@aido/db/traits";
 import { suitFor } from "@aido/scoring";
 import { ActionBadge, Card, ScoreRing } from "../_ui"; import { currentUserId } from "../lib/session";
 import { Nav } from "../_nav";
 
 export const dynamic = "force-dynamic";
-const USER = await currentUserId();
-
 export default async function Picks() {
+  const USER = await currentUserId();
   const profile = await getProfile(USER);
   const scored = [];
-  for (const ticker of await listTickers()) {
-    const t = await getTraits(ticker);
-    if (!t || t.score == null) continue;
+  for (const t of await listTraits()) {
+    if (t.score == null) continue;
     const s = profile
       ? suitFor({ risk: profile.risk, horizon: profile.horizon, objective: profile.objective }, { volatility: t.volatility, avgDailyValueKobo: t.avgDailyValueKobo, categories: t.categories, dividendYield: t.dividendYield })
       : null;
@@ -27,7 +25,7 @@ export default async function Picks() {
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: 16 }}>
         <Card>
           <div style={{ fontSize: 12, color: "var(--muted)", fontWeight: 800 }}>FOR YOU 🎯</div>
-          {personal ? <div style={{ display: "flex", gap: 12, alignItems: "center" }}><ScoreRing score={personal.score} /><div><ActionBadge action={personal.action} /> <a href={`/stocks/${personal.ticker}`} style={{ fontWeight: 800 }}>{personal.ticker}</a><div style={{ fontSize: 13, color: "var(--muted)" }}>{personal.reason}</div></div></div> : <p>No strong opportunity this week.</p>}
+          {personal ? <div style={{ display: "flex", gap: 12, alignItems: "center" }}><ScoreRing score={personal.score} /><div><ActionBadge action={personal.action} /> <a href={`/stocks/${personal.ticker}`} style={{ fontWeight: 800 }}>{personal.ticker}</a><div style={{ fontSize: 13, color: "var(--muted)" }}>{personal.reason}</div>{market && personal.ticker === market.ticker ? <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 4 }}>Also the market's top pick this week — above is why it fits <em>you</em> specifically.</div> : null}</div></div> : <p>No strong opportunity this week.</p>}
         </Card>
         <Card>
           <div style={{ fontSize: 12, color: "var(--muted)", fontWeight: 800 }}>MARKET PICK OF THE WEEK</div>

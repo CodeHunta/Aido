@@ -24,7 +24,7 @@ export default async function Dashboard() {
   }
   const analysis = analyzePortfolio(inputs);
 
-  let personal: { ticker: string; score: number; action: string | null } | null = null;
+  let personal: { ticker: string; score: number; action: string | null; reason: string } | null = null;
   let market: { ticker: string; score: number; action: string | null } | null = null;
   for (const t of all) {
     if (t.score == null) continue;
@@ -34,7 +34,7 @@ export default async function Dashboard() {
       { risk: profile.risk, horizon: profile.horizon, objective: profile.objective },
       { volatility: t.volatility, avgDailyValueKobo: t.avgDailyValueKobo, categories: t.categories, dividendYield: t.dividendYield },
     );
-    if (s.level !== "low" && (!personal || t.score > personal.score)) personal = { ticker: t.ticker, score: t.score, action: t.action };
+    if (s.level !== "low" && (!personal || t.score > personal.score)) personal = { ticker: t.ticker, score: t.score, action: t.action, reason: s.reasons[0] ?? "" };
   }
 
   return (
@@ -50,7 +50,7 @@ export default async function Dashboard() {
         </Card>
         <Card>
           <div style={{ fontSize: 12, color: "var(--muted)", fontWeight: 800 }}>YOUR AIDO PICK</div>
-          {personal ? <div style={{ display: "flex", gap: 12, alignItems: "center", marginTop: 8 }}><ScoreRing score={personal.score} /><div><ActionBadge action={personal.action} /> <a href={`/stocks/${personal.ticker}`} style={{ fontWeight: 800 }}>{personal.ticker}</a></div></div> : <p>No strong opportunity this week.</p>}
+          {personal ? <div style={{ display: "flex", gap: 12, alignItems: "center", marginTop: 8 }}><ScoreRing score={personal.score} /><div><ActionBadge action={personal.action} /> <a href={`/stocks/${personal.ticker}`} style={{ fontWeight: 800 }}>{personal.ticker}</a><div style={{ fontSize: 12, color: "var(--muted)" }}>{personal.reason}</div></div></div> : <p>No strong opportunity this week.</p>}
         </Card>
         <Card>
           <div style={{ fontSize: 12, color: "var(--muted)", fontWeight: 800 }}>MARKET PICK</div>
