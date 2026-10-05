@@ -1,7 +1,7 @@
 // Sunday engine (runnable any day): market pick + personal picks, in-app alerts,
 // email (ZeptoMail when keys exist, logged otherwise), Expo push (best effort).
 // Run: pnpm --filter @aido/worker weekly
-import { desc, eq, like } from "drizzle-orm";
+import { desc, eq, like } from "@aido/db/drizzle";
 import {
   alerts,
   db,

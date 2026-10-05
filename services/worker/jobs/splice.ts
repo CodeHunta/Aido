@@ -6,7 +6,7 @@
 // untouched, so momentum/volatility shapes stay as seeded; only levels align.
 // Real rows (source=ngx-delayed) are never modified.
 // Run once: pnpm --filter @aido/worker ngx:splice
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq } from "@aido/db/drizzle";
 import { db, pricesDaily } from "@aido/db";
 
 async function main() {

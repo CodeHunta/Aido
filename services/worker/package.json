@@ -8,6 +8,7 @@
     "score": "tsx ./jobs/score.ts",
     "ngx": "tsx ./jobs/ngx.ts",
     "ngx:splice": "tsx ./jobs/splice.ts",
+    "sql": "tsx ./jobs/sql.ts",
     "demo:phase5": "tsx ./jobs/demo5.ts",
     "weekly": "tsx ./jobs/weekly.ts",
     "lint": "tsc --noEmit"
@@ -16,7 +17,7 @@
     "@aido/db": "workspace:*",
     "@aido/email": "workspace:*",
     "@aido/scoring": "workspace:*",
-    "drizzle-orm": "0.36.4"
+    "postgres": "3.4.5"
   },
   "devDependencies": {
     "@types/node": "22.7.5",

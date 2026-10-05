@@ -3,7 +3,7 @@
 // official price-list page uses; 30-min delayed). Imports the FULL listed
 // universe (146 equities) with real OHLCV + sector + trade date.
 // Run daily after close: pnpm --filter @aido/worker ngx
-import { desc, eq } from "drizzle-orm";
+import { desc, eq } from "@aido/db/drizzle";
 import { db, pricesDaily, stocks } from "@aido/db";
 import type { IngestAdapter, PriceBar } from "./ingest";
 
@@ -268,10 +268,12 @@ async function main() {
   console.log("[ngx] unmapped (delisted, sample data kept): WAPCO, FLOURMILL, MRS");
 }
 
-main().then(
-  () => process.exit(0),
-  (e) => {
-    console.error("[ngx] failed:", (e as Error).message ?? e);
-    process.exit(1);
-  },
-);
+if (process.argv[1]?.endsWith("ngx.ts")) {
+  main().then(
+    () => process.exit(0),
+    (e) => {
+      console.error("[ngx] failed:", (e as Error).message ?? e);
+      process.exit(1);
+    },
+  );
+}

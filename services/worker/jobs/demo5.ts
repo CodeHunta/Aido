@@ -1,6 +1,6 @@
 // Phase 5 demo — two sample investors, personal picks + portfolio check.
 // Run: pnpm --filter @aido/worker demo:phase5
-import { eq } from "drizzle-orm";
+import { eq } from "@aido/db/drizzle";
 import {
   db,
   dividends,

@@ -1,6 +1,6 @@
 // Scores the whole NGX universe from DB data and stores factor_scores + recommendations.
 // Run: pnpm --filter @aido/worker score
-import { desc, eq } from "drizzle-orm";
+import { desc, eq } from "@aido/db/drizzle";
 import { db, dividends, factorScores, financials, pricesDaily, recommendations, stocks } from "@aido/db";
 import { scoreStock } from "@aido/scoring";
 
