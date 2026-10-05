@@ -1,7 +1,7 @@
 import { eq } from "@aido/db/drizzle";
 import { db } from "@aido/db";
 import { portfolios, watchlists } from "@aido/db/schema";
-import { getProfile, getTraits, listTickers } from "@aido/db/traits";
+import { getProfile, listTraits } from "@aido/db/traits";
 import { analyzePortfolio, suitFor } from "@aido/scoring";
 import { ActionBadge, Card, ScoreRing, naira } from "./_ui";
 import { currentUserId } from "./lib/session";
@@ -15,25 +15,26 @@ export default async function Dashboard() {
   const held = await db.select().from(portfolios).where(eq(portfolios.userId, USER));
   const watched = await db.select().from(watchlists).where(eq(watchlists.userId, USER));
 
+  const all = await listTraits();
+  const byTicker = new Map(all.map((t) => [t.ticker, t]));
   const inputs = [];
   for (const h of held) {
-    const t = await getTraits(h.ticker);
+    const t = byTicker.get(h.ticker);
     inputs.push({ ticker: h.ticker, qty: Number(h.qty), avgCostKobo: Number(h.avgCostKobo), priceKobo: t?.closeKobo ?? 0, sector: t?.sector ?? "", dividendYield: t?.dividendYield ?? null });
   }
   const analysis = analyzePortfolio(inputs);
 
   let personal: { ticker: string; score: number; action: string | null } | null = null;
   let market: { ticker: string; score: number; action: string | null } | null = null;
-  for (const ticker of await listTickers()) {
-    const t = await getTraits(ticker);
-    if (!t || t.score == null) continue;
-    if (!market || t.score > market.score) market = { ticker, score: t.score, action: t.action };
+  for (const t of all) {
+    if (t.score == null) continue;
+    if (!market || t.score > market.score) market = { ticker: t.ticker, score: t.score, action: t.action };
     if (!profile) continue;
     const s = suitFor(
       { risk: profile.risk, horizon: profile.horizon, objective: profile.objective },
       { volatility: t.volatility, avgDailyValueKobo: t.avgDailyValueKobo, categories: t.categories, dividendYield: t.dividendYield },
     );
-    if (s.level !== "low" && (!personal || t.score > personal.score)) personal = { ticker, score: t.score, action: t.action };
+    if (s.level !== "low" && (!personal || t.score > personal.score)) personal = { ticker: t.ticker, score: t.score, action: t.action };
   }
 
   return (

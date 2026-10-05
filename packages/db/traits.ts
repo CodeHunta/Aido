@@ -74,6 +74,69 @@ export async function listTickers(): Promise<string[]> {
   return (await db.select({ ticker: stocks.ticker }).from(stocks).orderBy(stocks.ticker)).map((r) => r.ticker);
 }
 
+// Bulk loader: the whole universe in ~5 queries instead of hundreds.
+// Dashboard, Explore and Picks use this — per-ticker getTraits stays for
+// single-stock pages where a few queries are cheap.
+export async function listTraits(): Promise<StockTraits[]> {
+  const [allStocks, allPrices, latestRecs, latestDivs] = await Promise.all([
+    db.select().from(stocks).orderBy(stocks.ticker),
+    db.select().from(pricesDaily).orderBy(pricesDaily.ticker, pricesDaily.date),
+    db
+      .selectDistinctOn([recommendations.ticker], {
+        ticker: recommendations.ticker,
+        score: recommendations.score,
+        action: recommendations.action,
+        confidence: recommendations.confidence,
+        thesis: recommendations.thesis,
+        asOf: recommendations.asOf,
+      })
+      .from(recommendations)
+      .orderBy(recommendations.ticker, desc(recommendations.asOf)),
+    db
+      .selectDistinctOn([dividends.ticker], { ticker: dividends.ticker, dpsKobo: dividends.dpsKobo })
+      .from(dividends)
+      .orderBy(dividends.ticker, desc(dividends.payDate)),
+    db.select().from(financials),
+  ]);
+  const pricesByTicker = new Map<string, { date: string; close: number; volume: number; source: string | null }[]>();
+  for (const p of allPrices) {
+    const arr = pricesByTicker.get(p.ticker) ?? [];
+    arr.push({ date: p.date, close: p.closeKobo ?? 0, volume: Number(p.volume ?? 0), source: p.source ?? null });
+    pricesByTicker.set(p.ticker, arr);
+  }
+  const recByTicker = new Map(latestRecs.map((r) => [r.ticker, r]));
+  const divByTicker = new Map(latestDivs.map((d) => [d.ticker, d.dpsKobo]));
+
+  return allStocks.map((s) => {
+    const series = pricesByTicker.get(s.ticker) ?? [];
+    const closes = series.map((p) => p.close).filter((c) => c > 0);
+    const rets: number[] = [];
+    for (let k = 1; k < closes.length; k++) rets.push(closes[k]! / closes[k - 1]! - 1);
+    const last = closes[closes.length - 1] ?? null;
+    const lastRow = series[series.length - 1];
+    const div = divByTicker.get(s.ticker);
+    const rec = recByTicker.get(s.ticker);
+    return {
+      ticker: s.ticker,
+      name: s.name,
+      sector: s.sector,
+      categories: s.categories,
+      asset: s.asset,
+      closeKobo: last,
+      asOf: lastRow?.date ?? null,
+      source: lastRow?.source ?? null,
+      volatility: rets.length > 5 ? stdev(rets) * Math.sqrt(252) : null,
+      avgDailyValueKobo:
+        closes.length > 0 ? series.reduce((a, p, k) => a + p.volume * (closes[k] ?? 0), 0) / series.length : null,
+      dividendYield: div != null && last ? Number(div) / last : null,
+      score: rec?.score ?? null,
+      action: rec?.action ?? null,
+      confidence: rec?.confidence ?? null,
+      factors: (rec?.thesis as { factors?: Record<string, number> } | null)?.factors ?? null,
+    };
+  });
+}
+
 export async function getProfile(userId: string) {
   return (await db.select().from(investorProfiles).where(eq(investorProfiles.userId, userId)))[0] ?? null;
 }

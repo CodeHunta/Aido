@@ -1,4 +1,4 @@
-import { getProfile, getTraits, listTickers } from "@aido/db/traits";
+import { getProfile, listTraits } from "@aido/db/traits";
 import { suitFor } from "@aido/scoring";
 import { bad, ok, userOf } from "../_lib";
 
@@ -12,9 +12,7 @@ export async function GET(req: Request) {
   const profile = await getProfile(await userOf(req));
 
   const out = [];
-  for (const ticker of await listTickers()) {
-    const t = await getTraits(ticker);
-    if (!t) continue;
+  for (const t of await listTraits()) {
     if (category && !t.categories.includes(category)) continue;
     if (q && !t.ticker.toLowerCase().includes(q) && !t.name.toLowerCase().includes(q)) continue;
     const s = profile

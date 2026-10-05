@@ -1,4 +1,4 @@
-import { getProfile, getTraits, listTickers } from "@aido/db/traits";
+import { getProfile, listTraits } from "@aido/db/traits";
 import { suitFor } from "@aido/scoring";
 import { ActionBadge, Card, naira } from "../_ui";
 import { currentUserId } from "../lib/session";
@@ -50,9 +50,7 @@ export default async function Explore({ searchParams }: { searchParams: { q?: st
   }
 
   const rows = [];
-  for (const ticker of await listTickers()) {
-    const t = await getTraits(ticker);
-    if (!t) continue;
+  for (const t of await listTraits()) {
     if (tab === "stocks" && t.asset !== "stock") continue;
     if (tab === "etfs" && t.asset !== "etf") continue;
     if (tab === "reits" && t.asset !== "reit") continue;
