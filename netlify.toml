@@ -1,5 +1,6 @@
 # Netlify deploy for the Aido web app (monorepo).
-# UI settings to match: Base directory = (empty, repo root),
+# IMPORTANT: in the Netlify UI, leave "Base directory" EMPTY (repo root).
+# Setting it to apps/web or apps/mobile breaks the publish path below.
 # Build command and Publish directory come from here.
 [build]
   command = "pnpm --filter @aido/web build"
