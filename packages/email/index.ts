@@ -1,22 +1,62 @@
-// Transactional email. Uses ZeptoMail when ZEPTOMAIL_API_KEY is set,
-// otherwise logs to console so local dev never blocks (Phase 7).
+// Transactional email. Provider picked automatically:
+// 1. SendGrid (SENDGRID_API_KEY) — verified Gmail sender, no domain.
+// 2. Mailjet (MJ_APIKEY_PUBLIC) — verified Gmail sender, no domain.
+// 3. ZeptoMail (ZEPTOMAIL_API_KEY) — needs domain + credits.
+// 4. Log — never blocks local dev (Phase 7).
 export interface Email {
   to: string;
   subject: string;
   html: string;
 }
 
-const API = "https://api.zeptomail.com/v1.1/email";
+const ZEPTO_API = "https://api.zeptomail.com/v1.1/email";
+const SENDGRID_API = "https://api.sendgrid.com/v3/mail/send";
 
 export async function sendEmail(email: Email): Promise<{ sent: boolean; via: string }> {
-  const key = process.env.ZEPTOMAIL_API_KEY;
+  if (process.env.SENDGRID_API_KEY) return sendViaSendGrid(email);
+  if (process.env.MJ_APIKEY_PUBLIC) return sendViaMailjet(email);
+  if (process.env.ZEPTOMAIL_API_KEY) return sendViaZeptoMail(email);
+  console.log(`[email:log] to=${email.to} subject="${email.subject}"`);
+  console.log(email.html.slice(0, 300));
+  return { sent: false, via: "log" };
+}
+
+async function sendViaSendGrid(email: Email): Promise<{ sent: boolean; via: string }> {
+  const key = process.env.SENDGRID_API_KEY!;
+  const from = process.env.SENDGRID_FROM ?? process.env.ZEPTOMAIL_FROM ?? "noreply@example.com";
+  const res = await fetch(SENDGRID_API, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${key}`, "content-type": "application/json" },
+    body: JSON.stringify({
+      personalizations: [{ to: [{ email: email.to }] }],
+      from: { email: from },
+      subject: email.subject,
+      content: [{ type: "text/html", value: email.html }],
+    }),
+  });
+  if (res.status === 202) return { sent: true, via: "sendgrid" };
+  console.error(`[email] SendGrid failed: ${res.status} ${await res.text()}`);
+  return { sent: false, via: "sendgrid-error" };
+}
+
+async function sendViaMailjet(email: Email): Promise<{ sent: boolean; via: string }> {
+  const pub = process.env.MJ_APIKEY_PUBLIC!;
+  const priv = process.env.MJ_APIKEY_PRIVATE!;
+  const from = process.env.MJ_FROM ?? process.env.ZEPTOMAIL_FROM ?? "noreply@example.com";
+  const res = await fetch("https://api.mailjet.com/v3.1/send", {
+    method: "POST",
+    headers: { Authorization: "Basic " + Buffer.from(`${pub}:${priv}`).toString("base64"), "content-type": "application/json" },
+    body: JSON.stringify({ Messages: [{ From: { Email: from, Name: "Aido" }, To: [{ Email: email.to }], Subject: email.subject, HTMLPart: email.html }] }),
+  });
+  if (res.ok) return { sent: true, via: "mailjet" };
+  console.error(`[email] Mailjet failed: ${res.status} ${await res.text()}`);
+  return { sent: false, via: "mailjet-error" };
+}
+
+async function sendViaZeptoMail(email: Email): Promise<{ sent: boolean; via: string }> {
+  const key = process.env.ZEPTOMAIL_API_KEY!;
   const from = process.env.ZEPTOMAIL_FROM ?? "noreply@example.com";
-  if (!key) {
-    console.log(`[email:log] to=${email.to} subject="${email.subject}"`);
-    console.log(email.html.slice(0, 300));
-    return { sent: false, via: "log" };
-  }
-  const res = await fetch(API, {
+  const res = await fetch(ZEPTO_API, {
     method: "POST",
     headers: { "content-type": "application/json", Authorization: key.startsWith("Zoho-enczapikey") ? key : `Zoho-enczapikey ${key}` },
     body: JSON.stringify({ from: { address: from }, to: [{ email_address: { address: email.to } }], subject: email.subject, htmlbody: email.html }),

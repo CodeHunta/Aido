@@ -1,0 +1,13 @@
+# Netlify deploy for the Aido web app (monorepo).
+# UI settings to match: Base directory = (empty, repo root),
+# Build command and Publish directory come from here.
+[build]
+  command = "pnpm --filter @aido/web build"
+  publish = "apps/web/.next"
+
+[build.environment]
+  NETLIFY_USE_PNPM = "true"
+  NODE_VERSION = "20"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
