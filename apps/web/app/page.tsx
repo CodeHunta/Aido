@@ -7,9 +7,8 @@ const COBALT = "#0047AB";
 function TopBar() {
   return (
     <header className="sticky-nav" style={{ display: "flex", alignItems: "center", gap: 28, padding: "16px 0" }}>
-      <a href="/" style={{ display: "flex", alignItems: "center", gap: 10, fontWeight: 800, fontSize: 22, color: COBALT }}>
-        <span style={{ display: "inline-flex", width: 36, height: 36, borderRadius: 12, background: COBALT, color: "#fff", alignItems: "center", justifyContent: "center", fontSize: 20, fontWeight: 800 }}>A</span>
-        Aido
+      <a href="/" style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <img src="/aido-logo.png" alt="Aido" style={{ height: 34, width: "auto" }} />
       </a>
       <nav style={{ display: "flex", gap: 24, marginLeft: "auto", alignItems: "center", fontWeight: 700, fontSize: 15 }}>
         <a href="#features">Features</a>
@@ -116,7 +115,7 @@ export default function Landing() {
       </section>
 
       <footer style={{ display: "flex", justifyContent: "space-between", gap: 16, flexWrap: "wrap", padding: "32px 0 8px", fontSize: 13, color: "var(--muted)" }}>
-        <span style={{ fontWeight: 800, color: COBALT, fontSize: 16 }}>◉ Aido</span>
+        <span><img src="/aido-logo.png" alt="Aido" style={{ height: 26, width: "auto", verticalAlign: "middle" }} /></span>
         <span>© Aido · Educational intelligence, not financial advice.</span>
       </footer>
     </main>

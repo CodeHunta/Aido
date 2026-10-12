@@ -16,7 +16,7 @@ export default function Login() {
   return (
     <main style={{ maxWidth: 480, margin: "0 auto", padding: "24px 16px" }}>
       <PublicNav />
-      <h1 style={{ fontSize: 28, fontWeight: 800 }}>Log in</h1>
+      <div style={{ marginBottom: 12 }}><img src="/aido-logo.png" alt="Aido" style={{ height: 36, width: "auto" }} /></div><h1 style={{ fontSize: 28, fontWeight: 800 }}>Log in</h1>
       <Card>
         <form onSubmit={submit} style={{ display: "grid", gap: 10 }}>
           <input name="email" placeholder="Email" type="email" className="input" required />

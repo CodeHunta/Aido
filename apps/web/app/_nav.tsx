@@ -32,6 +32,9 @@ export async function Nav() {
   const links = authed ? APP_LINKS : PUBLIC_LINKS;
   return (
     <nav className="sticky-nav" style={{ display: "flex", gap: 16, padding: "12px 0", borderBottom: "1px solid var(--border)", marginBottom: 24, flexWrap: "wrap", alignItems: "center" }}>
+      <a href="/dashboard" style={{ display: "inline-flex", alignItems: "center" }}>
+        <img src="/aido-logo.png" alt="Aido" style={{ height: 26, width: "auto" }} />
+      </a>
       {links.map(([label, href]) => (
         <a key={href} href={href} style={{ fontWeight: 700, fontSize: 14 }}>{label}</a>
       ))}
