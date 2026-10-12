@@ -1,81 +1,124 @@
-import { eq } from "@aido/db/drizzle";
-import { db } from "@aido/db";
-import { portfolios, users, watchlists } from "@aido/db/schema";
-import { getProfile, listTraits } from "@aido/db/traits";
-import { analyzePortfolio, suitFor } from "@aido/scoring";
-import { ActionBadge, Card, ScoreRing, naira } from "./_ui";
-import { currentUserId } from "./lib/session";
-import { Nav } from "./_nav";
+import { Card } from "./_ui";
 
-export const dynamic = "force-dynamic";
+export const dynamic = "force-static";
 
-export default async function Dashboard() {
-  const USER = await currentUserId();
-  const profile = await getProfile(USER);
-  const me = (await db.select().from(users).where(eq(users.id, USER)))[0];
-  const firstName = me?.name?.trim().split(/\s+/)[0] || me?.email?.split("@")[0] || "there";
-  const held = await db.select().from(portfolios).where(eq(portfolios.userId, USER));
-  const watched = await db.select().from(watchlists).where(eq(watchlists.userId, USER));
+const COBALT = "#0047AB";
 
-  const all = await listTraits();
-  const byTicker = new Map(all.map((t) => [t.ticker, t]));
-  const inputs = [];
-  for (const h of held) {
-    const t = byTicker.get(h.ticker);
-    inputs.push({ ticker: h.ticker, qty: Number(h.qty), avgCostKobo: Number(h.avgCostKobo), priceKobo: t?.closeKobo ?? 0, sector: t?.sector ?? "", dividendYield: t?.dividendYield ?? null });
-  }
-  const analysis = analyzePortfolio(inputs);
-
-  let personal: { ticker: string; score: number; action: string | null; reason: string } | null = null;
-  let market: { ticker: string; score: number; action: string | null } | null = null;
-  for (const t of all) {
-    if (t.score == null) continue;
-    if (!market || t.score > market.score) market = { ticker: t.ticker, score: t.score, action: t.action };
-    if (!profile) continue;
-    const s = suitFor(
-      { risk: profile.risk, horizon: profile.horizon, objective: profile.objective },
-      { volatility: t.volatility, avgDailyValueKobo: t.avgDailyValueKobo, categories: t.categories, dividendYield: t.dividendYield },
-    );
-    if (s.level !== "low" && (!personal || t.score > personal.score)) personal = { ticker: t.ticker, score: t.score, action: t.action, reason: s.reasons[0] ?? "" };
-  }
-
+function TopBar() {
   return (
-    <main style={{ maxWidth: 960, margin: "0 auto", padding: "24px 16px" }}>
-      <Nav />
-      <p style={{ fontSize: 12, fontWeight: 800, letterSpacing: 3, color: "var(--muted)" }}>AIDO DASHBOARD</p>
-      <h1 style={{ fontSize: 32, fontWeight: 800, margin: "4px 0 16px" }}>Good morning, {firstName}</h1>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: 16 }}>
-        <Card>
-          <div style={{ fontSize: 12, color: "var(--muted)", fontWeight: 800 }}>PORTFOLIO</div>
-          <div className="num" style={{ fontSize: 24, fontWeight: 800 }}>{naira(analysis.valueKobo)} <span style={{ fontSize: 13, color: analysis.pnlKobo >= 0 ? "#16a34a" : "#dc2626" }}>{(analysis.pnlPct * 100).toFixed(1)}%</span></div>
-          <div style={{ fontSize: 13, color: "var(--muted)" }}>{held.length} holdings · {watched.length} watched</div>
-        </Card>
-        <Card>
-          <div style={{ fontSize: 12, color: "var(--muted)", fontWeight: 800 }}>YOUR AIDO PICK</div>
-          {personal ? <div style={{ display: "flex", gap: 12, alignItems: "center", marginTop: 8 }}><ScoreRing score={personal.score} /><div><ActionBadge action={personal.action} /> <a href={`/stocks/${personal.ticker}`} style={{ fontWeight: 800 }}>{personal.ticker}</a><div style={{ fontSize: 12, color: "var(--muted)" }}>{personal.reason}</div></div></div> : <p>No strong opportunity this week.</p>}
-        </Card>
-        <Card>
-          <div style={{ fontSize: 12, color: "var(--muted)", fontWeight: 800 }}>MARKET PICK</div>
-          {market ? <div style={{ display: "flex", gap: 12, alignItems: "center", marginTop: 8 }}><ScoreRing score={market.score} /><div><ActionBadge action={market.action} /> <a href={`/stocks/${market.ticker}`} style={{ fontWeight: 800 }}>{market.ticker}</a></div></div> : <p>—</p>}
-        </Card>
-      </div>
-      {held.length === 0 ? (
-        <Card>
-          <div style={{ marginTop: 16 }}>
-            <h3 style={{ marginTop: 0 }}>Welcome — let's set you up in 60 seconds</h3>
-            <ol style={{ fontSize: 14 }}>
-              <li><a href="/portfolio">Add a stock you own</a> (or one you're eyeing) — Aido values it live.</li>
-              <li><a href="/watchlist">Watch</a> anything interesting from <a href="/explore">Explore</a>.</li>
-              <li>Check back Sunday for <a href="/picks">your personal pick</a>.</li>
-            </ol>
+    <header style={{ display: "flex", alignItems: "center", gap: 28, padding: "20px 0" }}>
+      <a href="/" style={{ display: "flex", alignItems: "center", gap: 10, fontWeight: 800, fontSize: 22, color: COBALT }}>
+        <span style={{ display: "inline-flex", width: 36, height: 36, borderRadius: 12, background: COBALT, color: "#fff", alignItems: "center", justifyContent: "center", fontSize: 20, fontWeight: 800 }}>A</span>
+        Aido
+      </a>
+      <nav style={{ display: "flex", gap: 24, marginLeft: "auto", alignItems: "center", fontWeight: 700, fontSize: 15 }}>
+        <a href="#features">Features</a>
+        <a href="#how">How it works</a>
+        <a href="/login">Sign in</a>
+        <a href="/signup" className="btn-primary">Get started</a>
+      </nav>
+    </header>
+  );
+}
+
+function PreviewMock() {
+  return (
+    <div style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 20, overflow: "hidden", boxShadow: "0 24px 60px rgba(0,71,171,0.12)" }}>
+      <div style={{ display: "flex" }}>
+        <div style={{ background: "#0A2540", color: "#fff", padding: 20, minWidth: 150 }}>
+          <div style={{ fontWeight: 800, marginBottom: 16 }}>◉ Aido</div>
+          {["Your pick", "Explore", "Portfolio", "Watchlist", "Alerts"].map((x, i) => (
+            <div key={x} style={{ padding: "8px 12px", borderRadius: 10, marginBottom: 6, fontSize: 14, background: i === 0 ? "rgba(255,255,255,0.15)" : "transparent", opacity: i === 0 ? 1 : 0.75 }}>{x}</div>
+          ))}
+        </div>
+        <div style={{ padding: 20, flex: 1 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <strong>Your Aido Pick 🎯</strong>
+            <span style={{ fontSize: 12, color: "var(--muted)", border: "1px solid var(--border)", borderRadius: 999, padding: "2px 10px" }}>Product preview</span>
           </div>
-        </Card>
-      ) : analysis.weaknesses.length > 0 ? (
-        <Card>
-          <div style={{ marginTop: 16 }}><strong>Watch out:</strong><ul>{analysis.weaknesses.map((w) => <li key={w}>{w}</li>)}</ul></div>
-        </Card>
-      ) : null}
-      <p style={{ fontSize: 12, color: "var(--muted)", marginTop: 16 }}>Profile: {profile ? `${profile.risk} · ${profile.horizon} · ${profile.objective}` : "none"} · <a href="/portfolio">Manage portfolio →</a></p>
+          <div style={{ display: "flex", gap: 16, alignItems: "center", marginTop: 12 }}>
+            <svg width="84" height="84" viewBox="0 0 96 96">
+              <circle cx="48" cy="48" r="40" fill="none" stroke="#e2e8f0" strokeWidth="10" />
+              <circle cx="48" cy="48" r="40" fill="none" stroke="#16a34a" strokeWidth="10" strokeLinecap="round" strokeDasharray="251.3" strokeDashoffset="60" transform="rotate(-90 48 48)" />
+              <text x="48" y="56" textAnchor="middle" fontWeight="800" fontSize="24" fill="currentColor">76</text>
+            </svg>
+            <div>
+              <span className="pill pill-buy">BUY</span> <strong>CONOIL</strong>
+              <div style={{ fontSize: 13, color: "var(--muted)" }}>Pays 6.1% — feeds your combination goal</div>
+            </div>
+          </div>
+          <ul style={{ fontSize: 14, marginTop: 12, paddingLeft: 18 }}>
+            <li>Earnings accelerating</li>
+            <li>Valuation reasonable at this price</li>
+            <li><strong>Key risk:</strong> oil-price exposure</li>
+          </ul>
+          <p style={{ fontSize: 11, color: "var(--muted)" }}>Preview with sample data.</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function Landing() {
+  return (
+    <main style={{ maxWidth: 1080, margin: "0 auto", padding: "0 20px 40px" }}>
+      <TopBar />
+
+      <section style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(300px,1fr))", gap: 40, alignItems: "center", padding: "48px 0" }}>
+        <div>
+          <p style={{ fontSize: 13, fontWeight: 800, letterSpacing: 3, color: COBALT }}>WELCOME TO AIDO</p>
+          <h1 style={{ fontSize: 52, lineHeight: 1.05, letterSpacing: -2, margin: "12px 0" }}>Know what the market means for you.</h1>
+          <p style={{ fontSize: 18, color: "var(--muted)", maxWidth: 460 }}>
+            Aido turns noisy Nigerian stock-market data into clear, personal investment moves —
+            BUY, HOLD, SELL or WATCH — always with the why.
+          </p>
+          <div style={{ display: "flex", gap: 12, marginTop: 24, flexWrap: "wrap" }}>
+            <a href="/signup" className="btn-primary btn-lg">Get started</a>
+            <a href="#features" className="btn-outline btn-lg">Explore features</a>
+          </div>
+        </div>
+        <PreviewMock />
+      </section>
+
+      <section id="features" style={{ textAlign: "center", padding: "32px 0" }}>
+        <h2 style={{ fontSize: 34, letterSpacing: -1 }}>Less guessing. More conviction.</h2>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))", gap: 24, marginTop: 28, textAlign: "left" }}>
+          <Card>
+            <div style={{ width: 48, height: 48, borderRadius: "50%", background: "#E8F0FE", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22 }}>◉</div>
+            <h3>Opportunity ≠ suitability</h3>
+            <p style={{ color: "var(--muted)", fontSize: 15 }}>A great stock can be wrong for you. Aido scores the market and your personal fit separately — misfits stay visible, never hidden.</p>
+          </Card>
+          <Card>
+            <div style={{ width: 48, height: 48, borderRadius: "50%", background: "#E8F0FE", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22 }}>✎</div>
+            <h3>Every call explained</h3>
+            <p style={{ color: "var(--muted)", fontSize: 15 }}>Why now, why for you, what could go wrong — plus the full thesis behind every BUY, HOLD, SELL or WATCH.</p>
+          </Card>
+          <Card>
+            <div style={{ width: 48, height: 48, borderRadius: "50%", background: "#E8F0FE", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22 }}>▦</div>
+            <h3>Your portfolio, watched</h3>
+            <p style={{ color: "var(--muted)", fontSize: 15 }}>Live values, concentration warnings, and a personal pick every Sunday — with alerts only when something material changes.</p>
+          </Card>
+        </div>
+      </section>
+
+      <section id="how" style={{ padding: "32px 0", maxWidth: 760, margin: "0 auto" }}>
+        <h2 style={{ fontSize: 34, letterSpacing: -1 }}>How it works</h2>
+        <ol style={{ fontSize: 17, lineHeight: 2 }}>
+          <li><strong>1. Create your profile.</strong> Three quick steps: goal, risk, horizon.</li>
+          <li><strong>2. Get your Sunday pick.</strong> One stock, scored 0–100, matched to you and your portfolio.</li>
+          <li><strong>3. Track and get alerted.</strong> Watchlist pings and rating changes — never noise.</li>
+        </ol>
+      </section>
+
+      <section style={{ background: `linear-gradient(120deg,#0A2540,${COBALT})`, borderRadius: 24, padding: "56px 40px", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 24, flexWrap: "wrap", marginTop: 24 }}>
+        <h2 style={{ color: "#fff", fontSize: 32, margin: 0, maxWidth: 560 }}>Stop guessing the NGX. Start understanding it.</h2>
+        <a href="/signup" style={{ background: "#fff", color: COBALT, fontWeight: 800, borderRadius: 14, padding: "14px 28px" }}>Get started</a>
+      </section>
+
+      <footer style={{ display: "flex", justifyContent: "space-between", gap: 16, flexWrap: "wrap", padding: "32px 0 8px", fontSize: 13, color: "var(--muted)" }}>
+        <span style={{ fontWeight: 800, color: COBALT, fontSize: 16 }}>◉ Aido</span>
+        <span>© Aido · Educational intelligence, not financial advice.</span>
+      </footer>
     </main>
   );
 }

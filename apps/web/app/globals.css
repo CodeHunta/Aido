@@ -8,6 +8,7 @@
   --border: #e2e8f0;
   --text: #0f172a;
   --muted: #64748b;
+  --cobalt: #0047AB;
 }
 .dark {
   --bg: #020617;
@@ -38,3 +39,7 @@ table.tbl th.num, table.tbl td.num { text-align: right; font-variant-numeric: ta
 .skel { border-radius: 12px; background: var(--border); animation: skel-pulse 1.2s ease-in-out infinite; }
 .btn { border: 1px solid var(--border); background: var(--card); color: var(--text); border-radius: 10px; padding: 8px 14px; font-weight: 700; font-size: 13px; cursor: pointer; }
 .input { border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; font-size: 14px; background: var(--card); color: var(--text); }
+.btn-primary { display: inline-block; background: var(--cobalt); color: #fff; font-weight: 800; border-radius: 14px; padding: 10px 22px; }
+.btn-outline { display: inline-block; border: 2px solid var(--cobalt); color: var(--cobalt); font-weight: 800; border-radius: 14px; padding: 8px 20px; }
+.btn-lg { font-size: 16px; padding: 14px 28px; }
+a { color: inherit; }

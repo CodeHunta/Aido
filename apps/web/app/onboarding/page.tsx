@@ -40,7 +40,7 @@ export default function Onboarding() {
   async function finish() {
     setMsg("Saving…");
     const r = await fetch("/api/v1/profiles/me", { method: "PUT", headers: { "content-type": "application/json" }, body: JSON.stringify({ ...form, capitalKobo: Math.round(Number(capital || 0) * 100) }) });
-    if (r.ok) window.location.href = "/";
+    if (r.ok) window.location.href = "/dashboard";
     else setMsg("Couldn't save — try again.");
   }
 

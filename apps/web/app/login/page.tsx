@@ -11,7 +11,7 @@ export default function Login() {
     const fd = new FormData(e.currentTarget);
     const r = await authClient.signIn.email({ email: String(fd.get("email")), password: String(fd.get("password")) });
     if (r.error) setMsg(`Failed: ${r.error.message}`);
-    else window.location.href = new URLSearchParams(window.location.search).get("next") || "/";
+    else window.location.href = new URLSearchParams(window.location.search).get("next") || "/dashboard";
   }
   return (
     <main style={{ maxWidth: 480, margin: "0 auto", padding: "24px 16px" }}>

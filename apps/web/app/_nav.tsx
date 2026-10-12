@@ -3,7 +3,7 @@ import { auth } from "@aido/auth/auth";
 import DarkToggle from "./_theme";
 
 const APP_LINKS = [
-  ["Dashboard", "/"],
+  ["Dashboard", "/dashboard"],
   ["Explore", "/explore"],
   ["Compare", "/compare"],
   ["Portfolio", "/portfolio"],
