@@ -31,7 +31,7 @@ export async function Nav() {
   }
   const links = authed ? APP_LINKS : PUBLIC_LINKS;
   return (
-    <nav style={{ display: "flex", gap: 16, padding: "12px 0", borderBottom: "1px solid var(--border)", marginBottom: 24, flexWrap: "wrap", alignItems: "center" }}>
+    <nav className="sticky-nav" style={{ display: "flex", gap: 16, padding: "12px 0", borderBottom: "1px solid var(--border)", marginBottom: 24, flexWrap: "wrap", alignItems: "center" }}>
       {links.map(([label, href]) => (
         <a key={href} href={href} style={{ fontWeight: 700, fontSize: 14 }}>{label}</a>
       ))}

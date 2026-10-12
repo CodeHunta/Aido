@@ -10,7 +10,7 @@ const LINKS = [
 // No session check here so client pages can use it safely.
 export function PublicNav() {
   return (
-    <nav style={{ display: "flex", gap: 16, padding: "12px 0", borderBottom: "1px solid var(--border)", marginBottom: 24, flexWrap: "wrap", alignItems: "center" }}>
+    <nav className="sticky-nav" style={{ display: "flex", gap: 16, padding: "12px 0", borderBottom: "1px solid var(--border)", marginBottom: 24, flexWrap: "wrap", alignItems: "center" }}>
       {LINKS.map(([label, href]) => (
         <a key={href} href={href} style={{ fontWeight: 700, fontSize: 14 }}>{label}</a>
       ))}

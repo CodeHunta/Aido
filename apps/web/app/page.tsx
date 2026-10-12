@@ -6,7 +6,7 @@ const COBALT = "#0047AB";
 
 function TopBar() {
   return (
-    <header style={{ display: "flex", alignItems: "center", gap: 28, padding: "20px 0" }}>
+    <header className="sticky-nav" style={{ display: "flex", alignItems: "center", gap: 28, padding: "16px 0" }}>
       <a href="/" style={{ display: "flex", alignItems: "center", gap: 10, fontWeight: 800, fontSize: 22, color: COBALT }}>
         <span style={{ display: "inline-flex", width: 36, height: 36, borderRadius: 12, background: COBALT, color: "#fff", alignItems: "center", justifyContent: "center", fontSize: 20, fontWeight: 800 }}>A</span>
         Aido
