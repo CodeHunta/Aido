@@ -4,9 +4,21 @@
     "slug": "aido",
     "version": "0.1.0",
     "orientation": "portrait",
+    "icon": "./assets/icon.png",
     "newArchEnabled": true,
+    "splash": {
+      "backgroundColor": "#0047AB"
+    },
+    "android": {
+      "package": "com.codehunta.aido",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#0047AB"
+      }
+    },
     "extra": {
-      "apiUrl": "http://192.168.1.10:3000/api/v1"
+      "apiUrl": "http://192.168.100.65:3000/api/v1"
     }
   }
 }
