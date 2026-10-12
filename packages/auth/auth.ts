@@ -13,6 +13,10 @@ export const auth: ReturnType<typeof betterAuth> = betterAuth({
     provider: "pg",
     schema: { user: users, session: sessions, account: accounts, verification: verifications },
   }),
+  // 30 minutes of inactivity logs you out. Active use extends the session
+  // (refreshed at most every 5 minutes), and the browser drops the cookie
+  // afterwards — which is also what sends you back to the login screen.
+  session: { expiresIn: 60 * 30, updateAge: 60 * 5 },
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: false,

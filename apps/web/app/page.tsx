@@ -1,6 +1,6 @@
 import { eq } from "@aido/db/drizzle";
 import { db } from "@aido/db";
-import { portfolios, watchlists } from "@aido/db/schema";
+import { portfolios, users, watchlists } from "@aido/db/schema";
 import { getProfile, listTraits } from "@aido/db/traits";
 import { analyzePortfolio, suitFor } from "@aido/scoring";
 import { ActionBadge, Card, ScoreRing, naira } from "./_ui";
@@ -12,6 +12,8 @@ export const dynamic = "force-dynamic";
 export default async function Dashboard() {
   const USER = await currentUserId();
   const profile = await getProfile(USER);
+  const me = (await db.select().from(users).where(eq(users.id, USER)))[0];
+  const firstName = me?.name?.trim().split(/\s+/)[0] || me?.email?.split("@")[0] || "there";
   const held = await db.select().from(portfolios).where(eq(portfolios.userId, USER));
   const watched = await db.select().from(watchlists).where(eq(watchlists.userId, USER));
 
@@ -41,7 +43,7 @@ export default async function Dashboard() {
     <main style={{ maxWidth: 960, margin: "0 auto", padding: "24px 16px" }}>
       <Nav />
       <p style={{ fontSize: 12, fontWeight: 800, letterSpacing: 3, color: "var(--muted)" }}>AIDO DASHBOARD</p>
-      <h1 style={{ fontSize: 32, fontWeight: 800, margin: "4px 0 16px" }}>Good morning, {USER}</h1>
+      <h1 style={{ fontSize: 32, fontWeight: 800, margin: "4px 0 16px" }}>Good morning, {firstName}</h1>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: 16 }}>
         <Card>
           <div style={{ fontSize: 12, color: "var(--muted)", fontWeight: 800 }}>PORTFOLIO</div>
