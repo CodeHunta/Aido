@@ -7,6 +7,11 @@
       "android": { "buildType": "apk" },
       "env": { "EXPO_PUBLIC_API_URL": "http://192.168.100.65:3000/api/v1" }
     },
+    "preview-live": {
+      "distribution": "internal",
+      "android": { "buildType": "apk" },
+      "env": { "EXPO_PUBLIC_API_URL": "https://aido-intellisense.netlify.app/api/v1" }
+    },
     "production": { "android": { "buildType": "app-bundle" } }
   },
   "submit": { "production": {} }
