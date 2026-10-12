@@ -1,10 +1,13 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Aido — NGX Investment Intelligence",
   description: "Don't just know what the market is doing. Know what it means for you.",
+  appleWebApp: { capable: true, statusBarStyle: "default", title: "Aido" },
 };
+
+export const viewport: Viewport = { themeColor: "#0047AB" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

@@ -7,6 +7,13 @@ build/
 out/
 *.tsbuildinfo
 
+# Generated service worker (rebuilt by next-pwa on every build)
+apps/web/public/sw.js
+apps/web/public/sw.js.map
+apps/web/public/workbox-*.js
+apps/web/public/workbox-*.js.map
+apps/web/public/fallback-*.js
+
 # Env / secrets — NEVER commit real keys
 .env
 .env.local
