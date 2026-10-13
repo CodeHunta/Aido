@@ -1,0 +1,42 @@
+import { Stack, useRouter, useSegments } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import { useEffect } from "react";
+import { AuthProvider, useAuth } from "../lib/auth";
+import { Loading } from "../lib/ui";
+
+function Gate({ children }: { children: React.ReactNode }) {
+  const { user, loading } = useAuth();
+  const segments = useSegments();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (loading) return;
+    const inAuth = segments[0] === "(auth)";
+    if (!user && !inAuth) router.replace("/(auth)/login");
+    else if (user && inAuth) router.replace("/(tabs)");
+  }, [user, loading, segments, router]);
+
+  if (loading) return <Loading />;
+  return <>{children}</>;
+}
+
+export default function RootLayout() {
+  return (
+    <AuthProvider>
+      <Gate>
+        <StatusBar style="auto" />
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="(auth)" />
+          <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="onboarding" />
+          <Stack.Screen name="stocks/[ticker]" />
+          <Stack.Screen name="compare" />
+          <Stack.Screen name="alerts" />
+          <Stack.Screen name="profile" />
+          <Stack.Screen name="premium" />
+          <Stack.Screen name="methodology" />
+        </Stack>
+      </Gate>
+    </AuthProvider>
+  );
+}

@@ -2,16 +2,17 @@
   "expo": {
     "name": "Aido",
     "slug": "aido",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
+    "scheme": "aido",
     "newArchEnabled": true,
     "splash": {
       "backgroundColor": "#0047AB"
     },
     "android": {
       "package": "com.codehunta.aido",
-      "versionCode": 1,
+      "versionCode": 2,
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#0047AB"
@@ -22,6 +23,10 @@
       "eas": {
         "projectId": "60e17481-da9e-419f-92d6-4bad2db46826"
       }
-    }
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store"
+    ]
   }
 }
