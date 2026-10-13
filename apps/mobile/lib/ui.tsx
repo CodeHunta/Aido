@@ -124,3 +124,28 @@ export function Empty({ title, body, action }: { title: string; body: string; ac
     </Card>
   );
 }
+
+interface BoundaryState {
+  message: string | null;
+}
+
+export class ErrorBoundary extends React.Component<{ children: React.ReactNode }, BoundaryState> {
+  state: BoundaryState = { message: null };
+
+  static getDerivedStateFromError(e: unknown): BoundaryState {
+    return { message: e instanceof Error ? `${e.name}: ${e.message}` : String(e) };
+  }
+
+  render() {
+    if (this.state.message) {
+      return (
+        <View style={{ flex: 1, backgroundColor: C.bg, padding: 24, justifyContent: "center" }}>
+          <Text style={{ fontWeight: "800", fontSize: 18, color: C.text }}>Aido hit a problem</Text>
+          <Text style={{ color: C.muted, fontSize: 13, marginTop: 8 }}>{this.state.message}</Text>
+          <Text style={{ color: C.muted, fontSize: 13, marginTop: 8 }}>Screenshot this and send it to support — it tells us exactly what broke.</Text>
+        </View>
+      );
+    }
+    return this.props.children;
+  }
+}
