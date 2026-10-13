@@ -1,0 +1,38 @@
+# Aido daily refresh — runs on GitHub's servers, no PC needed.
+# Weekdays after NGX close: fresh prices -> ratings -> weekly picks.
+# Manual run anytime: Actions tab -> "Daily refresh" -> Run workflow.
+name: Daily refresh
+
+on:
+  schedule:
+    - cron: "0 15 * * 1-5"
+  workflow_dispatch:
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @aido/db migrate
+        env:
+          DATABASE_URL: ${{ secrets.NEON_DATABASE_URL }}
+          DATABASE_SSL: require
+      - run: pnpm --filter @aido/worker ngx
+        env:
+          DATABASE_URL: ${{ secrets.NEON_DATABASE_URL }}
+          DATABASE_SSL: require
+      - run: pnpm --filter @aido/worker score
+        env:
+          DATABASE_URL: ${{ secrets.NEON_DATABASE_URL }}
+          DATABASE_SSL: require
+      - run: pnpm --filter @aido/worker weekly
+        env:
+          DATABASE_URL: ${{ secrets.NEON_DATABASE_URL }}
+          DATABASE_SSL: require
