@@ -18,6 +18,8 @@ apps/web/public/fallback-*.js
 .env
 .env.local
 .env.*.local
+infra/.cloud-url
+infra/refresh.log
 
 # Expo / mobile
 .expo/
