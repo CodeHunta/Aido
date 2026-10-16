@@ -12,7 +12,7 @@ export async function userOf(req: Request): Promise<string> {
     const session = await auth.api.getSession({ headers: await headers() });
     if (session?.user?.id) return session.user.id;
   } catch {
-    // no session — fall through to demo
+    // no session, so fall through to demo
   }
   const u = new URL(req.url).searchParams.get("user");
   return u && u.length > 0 ? u : DEFAULT_USER;

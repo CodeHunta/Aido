@@ -20,14 +20,14 @@ export async function POST(req: Request) {
   const userId = await userOf(req);
   const body = (await req.json().catch(() => null)) as { ticker?: string; qty?: number; avgCostKobo?: number } | null;
   if (!body?.ticker || !body.qty || body.qty === 0 || body.avgCostKobo == null || body.avgCostKobo < 0) {
-    return bad("Need ticker, qty (not 0 — negative sells), avgCostKobo (>=0)");
+    return bad("Need ticker, qty (not 0. Use a negative number to sell), and avgCostKobo (0 or more)");
   }
   const ticker = body.ticker.toUpperCase();
   const t = await getTraits(ticker);
   if (!t) return bad("Unknown ticker", 404);
   const existing = (await db.select().from(portfolios).where(and(eq(portfolios.userId, userId), eq(portfolios.ticker, ticker))))[0];
   if (!existing) {
-    if (body.qty < 0) return bad("You don't hold this stock yet — can't sell");
+    if (body.qty < 0) return bad("You don't hold this stock yet, so you can't sell");
     await db.insert(portfolios).values({ userId, ticker, qty: body.qty, avgCostKobo: body.avgCostKobo });
     return ok({ added: ticker, qty: body.qty, avgCostKobo: body.avgCostKobo });
   }

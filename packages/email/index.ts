@@ -1,8 +1,8 @@
 // Transactional email. Provider picked automatically:
-// 1. SendGrid (SENDGRID_API_KEY) — verified Gmail sender, no domain.
-// 2. Mailjet (MJ_APIKEY_PUBLIC) — verified Gmail sender, no domain.
-// 3. ZeptoMail (ZEPTOMAIL_API_KEY) — needs domain + credits.
-// 4. Log — never blocks local dev (Phase 7).
+// 1. SendGrid (SENDGRID_API_KEY): verified Gmail sender, no domain.
+// 2. Mailjet (MJ_APIKEY_PUBLIC): verified Gmail sender, no domain.
+// 3. ZeptoMail (ZEPTOMAIL_API_KEY): needs domain + credits.
+// 4. Log: never blocks local dev (Phase 7).
 export interface Email {
   to: string;
   subject: string;
@@ -71,9 +71,9 @@ async function sendViaZeptoMail(email: Email): Promise<{ sent: boolean; via: str
 export function weeklyPickHtml(user: string, pick: { ticker: string; score: number; action: string } | null, market: { ticker: string; score: number } | null): string {
   return `<h2>Your Aido Pick is in 🎯</h2>${
     pick
-      ? `<p><strong>${pick.ticker} — ${pick.action}</strong> · ${pick.score}/100</p><p><a href="/picks">View recommendation →</a></p>`
+      ? `<p><strong>${pick.ticker}: ${pick.action}</strong> · ${pick.score}/100</p><p><a href="/picks">View recommendation →</a></p>`
       : `<p><strong>No strong opportunity this week.</strong> Aido would rather say nothing than push a weak BUY.</p>`
-  }${market ? `<hr/><p>Aido Pick of the Week (market): <strong>${market.ticker} — ${market.score}/100</strong></p>` : ""}<p style="color:#888">Profile: ${user}. Educational intelligence, not financial advice.</p>`;
+  }${market ? `<hr/><p>Aido Pick of the Week (market): <strong>${market.ticker}, ${market.score}/100</strong></p>` : ""}<p style="color:#888">Profile: ${user}. Educational intelligence, not financial advice.</p>`;
 }
 
 export function recChangeHtml(ticker: string, from: string, to: string, reason: string): string {

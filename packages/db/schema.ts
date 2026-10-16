@@ -194,6 +194,17 @@ export const alerts = pgTable("alerts", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
+// One row per user. True = send me this kind of message. All true by default.
+export const alertPreferences = pgTable("alert_preferences", {
+  userId: text("user_id").primaryKey(),
+  weeklyPick: boolean("weekly_pick").notNull().default(true),
+  recChange: boolean("rec_change").notNull().default(true),
+  priceMove: boolean("price_move").notNull().default(true),
+  dividend: boolean("dividend").notNull().default(true),
+  news: boolean("news").notNull().default(true),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
 export const weeklyPicks = pgTable("weekly_picks", {
   id: text("id").primaryKey(),
   week: date("week").notNull(),

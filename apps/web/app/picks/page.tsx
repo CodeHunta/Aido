@@ -25,13 +25,14 @@ export default async function Picks() {
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: 16 }}>
         <Card>
           <div style={{ fontSize: 12, color: "var(--muted)", fontWeight: 800 }}>FOR YOU 🎯</div>
-          {personal ? <div style={{ display: "flex", gap: 12, alignItems: "center" }}><ScoreRing score={personal.score} /><div><ActionBadge action={personal.action} /> <a href={`/stocks/${personal.ticker}`} style={{ fontWeight: 800 }}>{personal.ticker}</a><div style={{ fontSize: 13, color: "var(--muted)" }}>{personal.reason}</div>{market && personal.ticker === market.ticker ? <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 4 }}>Also the market's top pick this week — above is why it fits <em>you</em> specifically.</div> : null}</div></div> : <p>No strong opportunity this week.</p>}
+          {personal ? <div style={{ display: "flex", gap: 12, alignItems: "center" }}><ScoreRing score={personal.score} /><div><ActionBadge action={personal.action} /> <a href={`/stocks/${personal.ticker}`} style={{ fontWeight: 800 }}>{personal.ticker}</a><div style={{ fontSize: 13, color: "var(--muted)" }}>{personal.reason}</div>{market && personal.ticker === market.ticker ? <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 4 }}>Also the market's top pick this week. Above is why it fits <em>you</em> specifically.</div> : null}</div></div> : <p>No strong opportunity this week.</p>}
         </Card>
         <Card>
           <div style={{ fontSize: 12, color: "var(--muted)", fontWeight: 800 }}>MARKET PICK OF THE WEEK</div>
-          {market ? <div style={{ display: "flex", gap: 12, alignItems: "center" }}><ScoreRing score={market.score} /><div><ActionBadge action={market.action} /> <a href={`/stocks/${market.ticker}`} style={{ fontWeight: 800 }}>{market.ticker}</a><div style={{ fontSize: 13, color: "var(--muted)" }}>One NGX stock worth watching.</div></div></div> : <p>—</p>}
+          {market ? <div style={{ display: "flex", gap: 12, alignItems: "center" }}><ScoreRing score={market.score} /><div><ActionBadge action={market.action} /> <a href={`/stocks/${market.ticker}`} style={{ fontWeight: 800 }}>{market.ticker}</a><div style={{ fontSize: 13, color: "var(--muted)" }}>One NGX stock worth watching.</div></div></div> : <p>No pick this week.</p>}
         </Card>
       </div>
+      <p style={{ fontSize: 12, color: "var(--muted)", marginTop: 12 }}>Prices: real NGX (delayed). Company numbers and dividends: still examples. <a href="/methodology">See what is real →</a></p>
     </main>
   );
 }

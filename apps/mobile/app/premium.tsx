@@ -55,7 +55,7 @@ export default function Premium() {
           <Text style={{ color: C.muted, fontSize: 14 }}>Market info · weekly market pick · basic watchlist & portfolio</Text>
         </Card>
         <Card>
-          <Text style={{ fontWeight: "800", fontSize: 16, color: C.text }}>Premium — ₦1,500/mo</Text>
+          <Text style={{ fontWeight: "800", fontSize: 16, color: C.text }}>Premium: ₦1,500/mo</Text>
           <Text style={{ color: C.muted, fontSize: 14 }}>Full theses · personal picks · advanced alerts · deep history</Text>
           <Field placeholder="Email for receipt" value={email} onChange={setEmail} keyboard="email-address" />
           <Btn title="Upgrade with Paystack" onPress={upgrade} primary />

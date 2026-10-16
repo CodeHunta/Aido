@@ -25,7 +25,7 @@ export default function Premium() {
       <p>Your plan: <strong>{plan}</strong></p>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
         <Card><h3>Free</h3><ul><li>Market info + weekly market pick</li><li>Basic watchlist & portfolio</li><li>Limited analysis</li></ul></Card>
-        <Card><h3>Premium — ₦1,500/mo</h3><ul><li>Full investment theses</li><li>Personal picks + advanced alerts</li><li>Deep history & comparison</li></ul>
+        <Card><h3>Premium: ₦1,500/mo</h3><ul><li>Full investment theses</li><li>Personal picks + advanced alerts</li><li>Deep history & comparison</li></ul>
           <form onSubmit={upgrade} style={{ display: "grid", gap: 8, marginTop: 8 }}>
             <input name="email" type="email" placeholder="Email for receipt" className="input" required />
             <button className="btn" type="submit">Upgrade with Paystack</button>

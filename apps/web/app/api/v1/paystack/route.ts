@@ -5,7 +5,7 @@ import { initializePayment } from "@aido/payments/paystack";
 import { bad, ok, userOf } from "../_lib";
 
 export const dynamic = "force-dynamic";
-const PREMIUM_MONTHLY_KOBO = 150000; // ₦1,500/mo — change before launch
+const PREMIUM_MONTHLY_KOBO = 150000; // ₦1,500/mo. Change before launch
 
 export async function GET(req: Request) {
   const rows = await db.select().from(subscriptions).where(eq(subscriptions.userId, await userOf(req)));

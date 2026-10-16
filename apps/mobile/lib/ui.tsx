@@ -26,7 +26,7 @@ export const C = {
 };
 
 export const naira = (kobo: number | null | undefined): string =>
-  kobo == null ? "—" : "₦" + (kobo / 100).toLocaleString("en-NG", { maximumFractionDigits: kobo >= 100000 ? 0 : 2 });
+  kobo == null ? "No data" : "₦" + (kobo / 100).toLocaleString("en-NG", { maximumFractionDigits: kobo >= 100000 ? 0 : 2 });
 
 export function Screen({ children }: { children: React.ReactNode }) {
   return <View style={{ flex: 1, backgroundColor: C.bg, padding: 16 }}>{children}</View>;
@@ -142,7 +142,7 @@ export class ErrorBoundary extends React.Component<{ children: React.ReactNode }
         <View style={{ flex: 1, backgroundColor: C.bg, padding: 24, justifyContent: "center" }}>
           <Text style={{ fontWeight: "800", fontSize: 18, color: C.text }}>Aido hit a problem</Text>
           <Text style={{ color: C.muted, fontSize: 13, marginTop: 8 }}>{this.state.message}</Text>
-          <Text style={{ color: C.muted, fontSize: 13, marginTop: 8 }}>Screenshot this and send it to support — it tells us exactly what broke.</Text>
+          <Text style={{ color: C.muted, fontSize: 13, marginTop: 8 }}>Screenshot this and send it to support. It tells us exactly what broke.</Text>
         </View>
       );
     }

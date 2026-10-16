@@ -3,6 +3,7 @@
 // Run: pnpm --filter @aido/worker weekly
 import { desc, eq, like } from "@aido/db/drizzle";
 import {
+  alertPreferences,
   alerts,
   db,
   devices,
@@ -36,6 +37,21 @@ async function pushToDevices(userId: string, title: string, body: string): Promi
     console.error(`[push] failed for ${userId}:`, (e as Error).message);
   }
   return ok;
+}
+
+async function prefsFor(userId: string) {
+  try {
+    const row = (await db.select().from(alertPreferences).where(eq(alertPreferences.userId, userId)))[0];
+    return {
+      weeklyPick: row?.weeklyPick ?? true,
+      recChange: row?.recChange ?? true,
+      priceMove: row?.priceMove ?? true,
+      dividend: row?.dividend ?? true,
+      news: row?.news ?? true,
+    };
+  } catch {
+    return { weeklyPick: true, recChange: true, priceMove: true, dividend: true, news: true };
+  }
 }
 
 async function main() {
@@ -79,27 +95,32 @@ async function main() {
       score: personal?.score ?? null,
       rationale: personal ? ((personal.why as string[]).join("; ") || "") : "No strong opportunity this week.",
     });
+    const prefs = await prefsFor(p.userId);
     const title = personal ? `Your Aido Pick: ${personal.ticker} ${personal.action} ${personal.score}/100` : "No strong opportunity this week";
-    await db.insert(alerts).values({
-      id: `${week}-pick-${p.userId}`,
-      userId: p.userId,
-      type: "weekly_pick",
-      ticker: personal?.ticker ?? null,
-      title,
-      body: personal ? `Strong growth + reasonable valuation. View recommendation →` : "Aido would rather say nothing than push a weak BUY.",
-    });
-    const u = (await db.select().from(users).where(eq(users.id, p.userId)))[0];
-    if (u?.email) {
-      await sendEmail({
-        to: u.email,
-        subject: personal ? `Your Aido Pick: ${personal.ticker} ${personal.action}` : "No strong opportunity this week",
-        html: weeklyPickHtml(p.userId, personal ? { ticker: personal.ticker, score: personal.score, action: personal.action ?? "" } : null, market ? { ticker: market.ticker, score: market.score } : null),
+    if (prefs.weeklyPick) {
+      await db.insert(alerts).values({
+        id: `${week}-pick-${p.userId}`,
+        userId: p.userId,
+        type: "weekly_pick",
+        ticker: personal?.ticker ?? null,
+        title,
+        body: personal ? `Strong growth + reasonable valuation. View recommendation →` : "Aido would rather say nothing than push a weak BUY.",
       });
+      const u = (await db.select().from(users).where(eq(users.id, p.userId)))[0];
+      if (u?.email) {
+        await sendEmail({
+          to: u.email,
+          subject: personal ? `Your Aido Pick: ${personal.ticker} ${personal.action}` : "No strong opportunity this week",
+          html: weeklyPickHtml(p.userId, personal ? { ticker: personal.ticker, score: personal.score, action: personal.action ?? "" } : null, market ? { ticker: market.ticker, score: market.score } : null),
+        });
+      } else {
+        console.log(`[weekly] ${p.userId}: no email on file — in-app alert only`);
+      }
+      const pushed = await pushToDevices(p.userId, "Your Aido Pick is in 🎯", title);
+      console.log(`[weekly] ${p.userId}: personal=${personal?.ticker ?? "none"} pushed=${pushed}`);
     } else {
-      console.log(`[weekly] ${p.userId}: no email on file — in-app alert only`);
+      console.log(`[weekly] ${p.userId}: personal=${personal?.ticker ?? "none"} skipped (weekly_pick off)`);
     }
-    const pushed = await pushToDevices(p.userId, "Your Aido Pick is in 🎯", title);
-    console.log(`[weekly] ${p.userId}: personal=${personal?.ticker ?? "none"} pushed=${pushed}`);
   }
 
   // Rec-change detector: compare each ticker's two latest recommendations
@@ -112,6 +133,8 @@ async function main() {
       const reason = `Score moved and evidence changed the call.`;
       console.log(`[change] ${ticker}: ${hist[1]!.action} → ${hist[0]!.action}`);
       for (const p of profiles) {
+        const prefs = await prefsFor(p.userId);
+        if (!prefs.recChange) continue;
         await db.insert(alerts).values({
           id: `${week}-chg-${ticker}-${p.userId}`,
           userId: p.userId,

@@ -4,6 +4,7 @@ import { alerts } from "@aido/db/schema";
 import { ActionBadge, Card } from "../_ui";
 import { currentUserId } from "../lib/session";
 import { Nav } from "../_nav";
+import AlertSettings from "./_settings";
 
 export const dynamic = "force-dynamic";
 
@@ -13,8 +14,10 @@ export default async function Alerts() {
     <main style={{ maxWidth: 720, margin: "0 auto", padding: "24px 16px" }}>
       <Nav />
       <h1 style={{ fontSize: 28, fontWeight: 800 }}>Alerts</h1>
+      <AlertSettings />
+      <div style={{ height: 16 }} />
       {rows.length === 0 ? (
-        <Card><p>Quiet for now. Aido pings you only when something material changes — a weekly pick, a rating switch, or a watchlist move.</p></Card>
+        <Card><p>Quiet for now. Aido pings you only when something material changes: a weekly pick, a rating switch, or a watchlist move.</p></Card>
       ) : (
         <div style={{ display: "grid", gap: 12 }}>
           {rows.map((a) => (

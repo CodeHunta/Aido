@@ -12,12 +12,14 @@ const APP_LINKS = [
   ["Alerts", "/alerts"],
   ["Premium", "/premium"],
   ["Profile", "/profile"],
+  ["Help", "/help"],
 ];
 
 const PUBLIC_LINKS = [
   ["Explore", "/explore"],
   ["How it works", "/methodology"],
   ["Premium", "/premium"],
+  ["Help", "/help"],
 ];
 
 // Logged out: only public pages + a way in. Logged in: the full product.

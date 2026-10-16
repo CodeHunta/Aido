@@ -4,6 +4,7 @@ import { portfolios, users, watchlists } from "@aido/db/schema";
 import { getProfile, listTraits } from "@aido/db/traits";
 import { analyzePortfolio, suitFor } from "@aido/scoring";
 import { ActionBadge, Card, ScoreRing, naira } from "../_ui";
+import { Tip } from "../_glossary";
 import { currentUserId } from "../lib/session";
 import { Nav } from "../_nav";
 
@@ -51,20 +52,20 @@ export default async function Dashboard() {
           <div style={{ fontSize: 13, color: "var(--muted)" }}>{held.length} holdings · {watched.length} watched</div>
         </Card>
         <Card>
-          <div style={{ fontSize: 12, color: "var(--muted)", fontWeight: 800 }}>YOUR AIDO PICK</div>
-          {personal ? <div style={{ display: "flex", gap: 12, alignItems: "center", marginTop: 8 }}><ScoreRing score={personal.score} /><div><ActionBadge action={personal.action} /> <a href={`/stocks/${personal.ticker}`} style={{ fontWeight: 800 }}>{personal.ticker}</a><div style={{ fontSize: 12, color: "var(--muted)" }}>{personal.reason}</div></div></div> : <p>No strong opportunity this week.</p>}
+          <div style={{ fontSize: 12, color: "var(--muted)", fontWeight: 800 }}>YOUR AIDO PICK <Tip term="score" /></div>
+          {personal ? <div style={{ display: "flex", gap: 12, alignItems: "center", marginTop: 8 }}><ScoreRing score={personal.score} /><div><ActionBadge action={personal.action} /> <Tip term={personal.action ?? "NO_SIGNAL"} /> <a href={`/stocks/${personal.ticker}`} style={{ fontWeight: 800 }}>{personal.ticker}</a><div style={{ fontSize: 12, color: "var(--muted)" }}>{personal.reason}</div></div></div> : <p>No strong opportunity this week. <Tip term="NO_SIGNAL" /></p>}
         </Card>
         <Card>
-          <div style={{ fontSize: 12, color: "var(--muted)", fontWeight: 800 }}>MARKET PICK</div>
-          {market ? <div style={{ display: "flex", gap: 12, alignItems: "center", marginTop: 8 }}><ScoreRing score={market.score} /><div><ActionBadge action={market.action} /> <a href={`/stocks/${market.ticker}`} style={{ fontWeight: 800 }}>{market.ticker}</a></div></div> : <p>—</p>}
+          <div style={{ fontSize: 12, color: "var(--muted)", fontWeight: 800 }}>MARKET PICK <Tip term="score" /></div>
+          {market ? <div style={{ display: "flex", gap: 12, alignItems: "center", marginTop: 8 }}><ScoreRing score={market.score} /><div><ActionBadge action={market.action} /> <Tip term={market.action ?? "NO_SIGNAL"} /> <a href={`/stocks/${market.ticker}`} style={{ fontWeight: 800 }}>{market.ticker}</a></div></div> : <p>No pick this week.</p>}
         </Card>
       </div>
       {held.length === 0 ? (
         <Card>
           <div style={{ marginTop: 16 }}>
-            <h3 style={{ marginTop: 0 }}>Welcome — let's set you up in 60 seconds</h3>
+            <h3 style={{ marginTop: 0 }}>Welcome. Let's get you set up in 60 seconds</h3>
             <ol style={{ fontSize: 14 }}>
-              <li><a href="/portfolio">Add a stock you own</a> (or one you're eyeing) — Aido values it live.</li>
+              <li><a href="/portfolio">Add a stock you own</a> (or one you're eyeing). Aido will value it live.</li>
               <li><a href="/watchlist">Watch</a> anything interesting from <a href="/explore">Explore</a>.</li>
               <li>Check back Sunday for <a href="/picks">your personal pick</a>.</li>
             </ol>
@@ -76,6 +77,7 @@ export default async function Dashboard() {
         </Card>
       ) : null}
       <p style={{ fontSize: 12, color: "var(--muted)", marginTop: 16 }}>Profile: {profile ? `${profile.risk} · ${profile.horizon} · ${profile.objective}` : "none"} · <a href="/portfolio">Manage portfolio →</a></p>
+      <p style={{ fontSize: 12, color: "var(--muted)" }}>Prices: real NGX (delayed). Company numbers and dividends: still examples. <a href="/methodology">See what is real →</a></p>
     </main>
   );
 }

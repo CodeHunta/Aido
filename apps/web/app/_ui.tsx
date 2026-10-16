@@ -1,5 +1,5 @@
 export function naira(kobo: number | null | undefined): string {
-  if (kobo == null) return "—";
+  if (kobo == null) return "No data";
   return "₦" + (kobo / 100).toLocaleString("en-NG", { maximumFractionDigits: 2 });
 }
 

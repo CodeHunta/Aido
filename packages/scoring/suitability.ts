@@ -1,6 +1,6 @@
 // Personal suitability: is this stock right for THIS investor?
 // Kept separate from the Aido Score on purpose (PRD: Opportunity != Suitability).
-// Pure function — easy to test, used by the API on the fly.
+// Pure function. Easy to test, used by the API on the fly.
 
 export type Suitability = "high" | "med" | "low";
 
@@ -57,17 +57,17 @@ export function suitFor(inv: InvestorTraits, s: StockTraits): SuitabilityResult 
     demote("low", "Pays no meaningful dividend for an income goal");
   }
   if (inv.objective === "preservation" && (volatile || speculative || thin)) {
-    demote("low", "Capital safety comes first — this risks it");
+    demote("low", "Capital safety comes first, and this stock risks it");
   }
   if (inv.objective === "growth" && turnaround && inv.risk !== "aggressive") {
     demote("med", "Growth goal, but this one is still proving itself");
   }
   if (level === "high") {
-    // Same stock can top every list — the reason must still feel personal.
+    // Same stock can top every list, so the reason must still feel personal.
     if (paysDiv && (inv.objective === "income" || inv.objective === "dividend" || inv.objective === "combination"))
-      hits.push(`Pays ${((s.dividendYield ?? 0) * 100).toFixed(1)}% — feeds your ${inv.objective} goal`);
+      hits.push(`Pays ${((s.dividendYield ?? 0) * 100).toFixed(1)}%, which feeds your ${inv.objective} goal`);
     else if (!volatile && !thin && (inv.risk === "conservative" || inv.objective === "preservation"))
-      hits.push("Steady price and easy to sell — suits a careful profile");
+      hits.push("Steady price and easy to sell, which suits a careful profile");
     else if (inv.horizon === "long" && (inv.objective === "growth" || inv.objective === "combination"))
       hits.push("Long horizon lets compounding do the heavy lifting");
     else if (inv.horizon === "short" && !volatile && !thin)

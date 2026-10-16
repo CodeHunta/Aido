@@ -2,6 +2,7 @@ import { Stack, useRouter, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import { AuthProvider, useAuth } from "../lib/auth";
+import { OfflineBar } from "../lib/offline";
 import { ErrorBoundary, Loading } from "../lib/ui";
 
 function Gate({ children }: { children: React.ReactNode }) {
@@ -26,10 +27,15 @@ export default function RootLayout() {
       <ErrorBoundary>
         <Gate>
           <StatusBar style="auto" />
+          <OfflineBar />
           <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="(auth)" />
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="onboarding" />
+            <Stack.Screen name="forgot" />
+            <Stack.Screen name="help" />
+            <Stack.Screen name="terms" />
+            <Stack.Screen name="privacy" />
             <Stack.Screen name="stocks/[ticker]" />
             <Stack.Screen name="compare" />
             <Stack.Screen name="alerts" />

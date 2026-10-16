@@ -13,7 +13,7 @@ export default function DarkToggle() {
     try {
       localStorage.setItem("aido-theme", on ? "dark" : "light");
     } catch {
-      // private mode — theme just won't persist
+      // private mode, so the theme just won't persist
     }
   }
   return (

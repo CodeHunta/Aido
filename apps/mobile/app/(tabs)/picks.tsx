@@ -68,7 +68,7 @@ export default function Picks() {
               </View>
             </View>
           ) : (
-            <Text style={{ color: C.muted }}>—</Text>
+            <Text style={{ color: C.muted }}>No pick this week.</Text>
           )}
         </Card>
       </View>

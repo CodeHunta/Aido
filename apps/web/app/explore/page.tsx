@@ -39,10 +39,10 @@ export default async function Explore({ searchParams }: { searchParams: { q?: st
           {TABS.map((t) => link({ ...base, tab: t, page: "1" }, t[0]!.toUpperCase() + t.slice(1), t === tab))}
         </div>
         <Card>
-          <h3 style={{ marginTop: 0 }}>{tab === "bonds" ? "Bonds" : "Mutual funds"} — coming next</h3>
+          <h3 style={{ marginTop: 0 }}>{tab === "bonds" ? "Bonds are" : "Mutual funds are"} coming next</h3>
           <p style={{ color: "var(--muted)", fontSize: 14 }}>
             The free NGX feed publishes shares, ETFs and REITs only. Bonds and funds need the paid
-            X-DataPortal feed — tracked for the next data upgrade. Stocks, ETFs and REITs are live now.
+            X-DataPortal feed, which is tracked for the next data upgrade. Stocks, ETFs and REITs are live now.
           </p>
         </Card>
       </main>
@@ -77,6 +77,9 @@ export default async function Explore({ searchParams }: { searchParams: { q?: st
     <main style={{ maxWidth: 960, margin: "0 auto", padding: "24px 16px" }}>
       <Nav />
       <h1 style={{ fontSize: 28, fontWeight: 800 }}>Explore</h1>
+      <div style={{ margin: "8px 0", padding: "10px 12px", border: "1px solid var(--border)", borderRadius: 12, fontSize: 13, background: "#f0fdf4" }}>
+        <strong>Prices: real NGX</strong> (a little delayed). Except WAPCO, FLOURMILL and MRS which are examples. <strong>Profits and dividends: examples for now.</strong>
+      </div>
       <div style={{ display: "flex", gap: 8, margin: "12px 0", flexWrap: "wrap" }}>
         {TABS.map((t) => link({ ...base, tab: t, page: "1" }, t[0]!.toUpperCase() + t.slice(1), t === tab))}
       </div>
@@ -99,6 +102,7 @@ export default async function Explore({ searchParams }: { searchParams: { q?: st
           <p style={{ color: "var(--muted)", fontSize: 14 }}>No matches. Try a shorter search, clear the style filter, or browse <a href="/explore">everything A–Z</a>.</p>
         ) : (
         <>
+        <div className="tbl-wrap">
         <table className="tbl">
           <colgroup><col style={{ width: "34%" }} /><col style={{ width: "17%" }} /><col style={{ width: "12%" }} /><col style={{ width: "20%" }} /><col style={{ width: "17%" }} /></colgroup>
           <thead><tr><th>Stock</th><th className="num">Price</th><th className="num">Score</th><th>Action</th><th>Fit</th></tr></thead>
@@ -107,13 +111,14 @@ export default async function Explore({ searchParams }: { searchParams: { q?: st
               <tr key={r.ticker}>
                 <td><a href={`/stocks/${r.ticker}`} style={{ fontWeight: 700 }}>{r.ticker}</a> <span className="ellipsis" style={{ color: "var(--muted)", fontSize: 12 }}>{r.name}</span></td>
                 <td className="num">{naira(r.closeKobo)}</td>
-                <td className="num"><strong>{r.score ?? "—"}</strong></td>
+                <td className="num"><strong>{r.score ?? "No data"}</strong></td>
                 <td><ActionBadge action={r.action} /></td>
-                <td>{r.suitability === "low" ? "Outside profile" : (r.suitability ?? "—")}</td>
+                <td>{r.suitability === "low" ? "Outside profile" : (r.suitability ?? "Not checked yet")}</td>
               </tr>
             ))}
           </tbody>
         </table>
+        </div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 12, fontSize: 13, color: "var(--muted)" }}>
           <span>Showing {from}–{to} of {total}</span>
           <span style={{ display: "flex", gap: 8 }}>

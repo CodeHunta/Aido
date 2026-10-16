@@ -1,8 +1,9 @@
 import type { Metadata, Viewport } from "next";
+import OfflineBar from "./_offline";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Aido — NGX Investment Intelligence",
+  title: "Aido: NGX Investment Intelligence",
   description: "Don't just know what the market is doing. Know what it means for you.",
   appleWebApp: { capable: true, statusBarStyle: "default", title: "Aido" },
 };
@@ -20,9 +21,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
+        <OfflineBar />
         {children}
         <footer style={{ maxWidth: 960, margin: "32px auto 0", padding: "16px", fontSize: 12, color: "var(--muted)", borderTop: "1px solid var(--border)" }}>
-          Aido is educational investment intelligence, not financial advice. <a href="/methodology">How Aido thinks →</a>
+          Aido is educational investment intelligence, not financial advice. <a href="/methodology">How Aido thinks →</a> · <a href="/help">Help</a> · <a href="/contact">Contact</a> · <a href="/terms">Terms</a> · <a href="/privacy">Privacy</a>
         </footer>
       </body>
     </html>

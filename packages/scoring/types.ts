@@ -19,7 +19,7 @@ export interface StockInputs {
   payoutRatio: number | null;
   fcfPositive: boolean | null;
   financialsAgeMonths: number | null;
-  // growth (null when only one period exists — engine degrades honestly)
+  // growth (null when only one period exists, so the engine degrades honestly)
   revenueGrowth: number | null;
   earningsGrowth: number | null;
   // market (12m daily closes + volumes)

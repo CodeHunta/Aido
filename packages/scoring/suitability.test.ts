@@ -24,7 +24,7 @@ describe("suitability", () => {
 
   it("keeps attractive-but-unsuitable visible (Outside Profile, not hidden)", () => {
     const r = suitFor({ risk: "conservative", horizon: "short", objective: "preservation" }, wild);
-    // Caller shelves level==="low" under "Outside Your Profile" — engine never deletes it
+    // Caller shelves level==="low" under "Outside Your Profile". The engine never deletes it
     expect(r.level).toBe("low");
     expect(r.reasons.join(" ")).toMatch(/conservative|Short horizon|Capital safety/i);
   });

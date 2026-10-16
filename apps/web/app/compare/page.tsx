@@ -1,19 +1,20 @@
 import { getFinancial, getTraits } from "@aido/db/traits";
 import { ActionBadge, Card, naira } from "../_ui";
+import { Tip } from "../_glossary";
 import { Nav } from "../_nav";
 
 export const dynamic = "force-dynamic";
 interface CmpT { score: number | null; dividendYield: number | null; volatility: number | null; closeKobo: number | null; }
 interface CmpF { roe: unknown; profitMargin: unknown; debtToEquity: unknown; }
-const FACTS: [string, (t: CmpT, f: CmpF | null) => string][] = [
-  ["Score", (t) => `${t.score ?? "—"}`],
-  ["Action", () => ""],
-  ["Price", (t) => naira(t.closeKobo)],
-  ["Dividend yield", (t) => (t.dividendYield != null ? `${(t.dividendYield * 100).toFixed(1)}%` : "—")],
-  ["ROE", (_t, f) => (f?.roe != null ? `${(Number(f.roe) * 100).toFixed(1)}%` : "—")],
-  ["Margin", (_t, f) => (f?.profitMargin != null ? `${(Number(f.profitMargin) * 100).toFixed(1)}%` : "—")],
-  ["D/E", (_t, f) => (f?.debtToEquity != null ? String(f.debtToEquity) : "—")],
-  ["Volatility", (t) => (t.volatility != null ? `${(t.volatility * 100).toFixed(0)}%` : "—")],
+const FACTS: [string, string, (t: CmpT, f: CmpF | null) => string][] = [
+  ["Score", "score", (t) => `${t.score ?? "No data"}`],
+  ["Action", "BUY", () => ""],
+  ["Price", "price", (t) => naira(t.closeKobo)],
+  ["Dividend yield", "yield", (t) => (t.dividendYield != null ? `${(t.dividendYield * 100).toFixed(1)}%` : "No data")],
+  ["ROE", "roe", (_t, f) => (f?.roe != null ? `${(Number(f.roe) * 100).toFixed(1)}%` : "No data")],
+  ["Margin", "margin", (_t, f) => (f?.profitMargin != null ? `${(Number(f.profitMargin) * 100).toFixed(1)}%` : "No data")],
+  ["D/E", "debt", (_t, f) => (f?.debtToEquity != null ? String(f.debtToEquity) : "No data")],
+  ["Volatility", "volatility", (t) => (t.volatility != null ? `${(t.volatility * 100).toFixed(0)}%` : "No data")],
 ];
 
 export default async function Compare({ searchParams }: { searchParams: { tickers?: string } }) {
@@ -33,13 +34,14 @@ export default async function Compare({ searchParams }: { searchParams: { ticker
         <button className="btn" type="submit">Compare</button>
       </form>
       <Card>
+        <div className="tbl-wrap">
         <table className="tbl">
           <colgroup><col style={{ width: "30%" }} />{cols.map(({ t }) => <col key={t.ticker} style={{ width: `${70 / Math.max(1, cols.length)}%` }} />)}</colgroup>
           <thead><tr><th>Fact</th>{cols.map(({ t }) => <th key={t.ticker} className="num"><a href={`/stocks/${t.ticker}`}>{t.ticker}</a></th>)}</tr></thead>
           <tbody>
-            {FACTS.map(([label, fn]) => (
+            {FACTS.map(([label, tip, fn]) => (
               <tr key={label}>
-                <td style={{ color: "var(--muted)" }}>{label}</td>
+                <td style={{ color: "var(--muted)" }}>{label} <Tip term={tip} /></td>
                 {cols.map(({ t, f }) => (
                   <td key={t.ticker} className="num">{label === "Action" ? <ActionBadge action={t.action} /> : label === "Price" ? naira(t.closeKobo) : fn(t, f)}</td>
                 ))}
@@ -47,6 +49,7 @@ export default async function Compare({ searchParams }: { searchParams: { ticker
             ))}
           </tbody>
         </table>
+        </div>
       </Card>
       <p style={{ color: "var(--muted)", fontSize: 13 }}>Goal is not to crown a winner, but to show how the opportunities differ (PRD §24).</p>
     </main>

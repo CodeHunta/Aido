@@ -41,7 +41,7 @@ export default function Onboarding() {
     setMsg("Saving…");
     const r = await fetch("/api/v1/profiles/me", { method: "PUT", headers: { "content-type": "application/json" }, body: JSON.stringify({ ...form, capitalKobo: Math.round(Number(capital || 0) * 100) }) });
     if (r.ok) window.location.href = "/dashboard";
-    else setMsg("Couldn't save — try again.");
+    else setMsg("Couldn't save. Please try again.");
   }
 
   return (
@@ -69,7 +69,7 @@ export default function Onboarding() {
           <>
             <h1 style={{ marginTop: 0 }}>How will you invest?</h1>
             <Options name="frequency" value={form.frequency} onPick={set("frequency")} opts={FREQS} />
-            <p style={{ fontSize: 14, color: "var(--muted)" }}>Aido will match every stock to this profile — and tell you plainly when something doesn't fit.</p>
+            <p style={{ fontSize: 14, color: "var(--muted)" }}>Aido will match every stock to this profile, and tell you plainly when something doesn't fit.</p>
           </>
         )}
         <div style={{ display: "flex", justifyContent: "space-between", marginTop: 20 }}>

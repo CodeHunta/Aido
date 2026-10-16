@@ -3,7 +3,8 @@ import { useCallback, useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { useAuth } from "../../lib/auth";
-import { ActionBadge, C, Card, H1, Loading, ScoreRing, Sub, naira } from "../../lib/ui";
+import { ActionBadge, Btn, C, Card, Empty, H1, Loading, ScoreRing, Sub, naira } from "../../lib/ui";
+import { HonestyNote, LabelWithTip, Tip } from "../../lib/glossary";
 
 interface Detail {
   ticker: string;
@@ -31,9 +32,11 @@ export default function StockDetail() {
   const [d, setD] = useState<Detail | null>(null);
   const [watched, setWatched] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [failed, setFailed] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
+    setFailed(false);
     try {
       const data = (await authedFetch(`/stocks/${String(ticker).toUpperCase()}`)) as Detail & { suitability: Detail["suitability"] };
       setD(data);
@@ -41,6 +44,7 @@ export default function StockDetail() {
       setWatched(Array.isArray(wl) && wl.some((w) => w.ticker === data.ticker));
     } catch {
       setD(null);
+      setFailed(true);
     } finally {
       setLoading(false);
     }
@@ -65,7 +69,16 @@ export default function StockDetail() {
   }
 
   if (loading) return <Loading />;
-  if (!d) return <View style={{ flex: 1, backgroundColor: C.bg, padding: 16 }}><Text>Stock not found.</Text></View>;
+  if (!d)
+    return (
+      <View style={{ flex: 1, backgroundColor: C.bg, padding: 16 }}>
+        <Empty
+          title={failed ? "Could not reach Aido" : "Stock not found"}
+          body={failed ? "Check your internet. The computer running Aido may also be asleep." : "Check the ticker and try again."}
+          action={failed ? <Btn title="Try again" onPress={load} primary /> : undefined}
+        />
+      </View>
+    );
   const max = Math.max(...d.prices.map((p) => p.closeKobo ?? 0), 1);
 
   return (
@@ -74,7 +87,8 @@ export default function StockDetail() {
         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
           <View style={{ flex: 1 }}>
             <H1>{d.name}</H1>
-            <Sub>{d.ticker} · {d.sector} · {d.source === "ngx-delayed" ? "NGX delayed" : "Sample"} data as of {d.asOf}</Sub>
+            <Sub>{d.ticker} · {d.sector}</Sub>
+            <HonestyNote source={d.source} asOf={d.asOf} />
           </View>
           <Pressable onPress={toggleWatch} disabled={busy} style={{ borderWidth: 1, borderColor: C.border, borderRadius: 10, padding: 9, backgroundColor: watched ? C.text : C.card }}>
             <Text style={{ fontWeight: "700", color: watched ? C.bg : C.text }}>{watched ? "✓ Watching" : "+ Watch"}</Text>
@@ -82,11 +96,24 @@ export default function StockDetail() {
         </View>
         <Card>
           <View style={{ flexDirection: "row", gap: 16, alignItems: "center" }}>
-            <ScoreRing score={d.score} />
+            <View>
+              <ScoreRing score={d.score} />
+              <LabelWithTip label="Score" term="score" />
+            </View>
             <View style={{ flex: 1 }}>
-              <ActionBadge action={d.action} />
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <ActionBadge action={d.action} />
+                <Tip term={d.action ?? "NO_SIGNAL"} />
+              </View>
               <Text style={{ fontSize: 22, fontWeight: "800", color: C.text, marginTop: 4 }}>{naira(d.closeKobo)}</Text>
-              <Text style={{ fontSize: 13, color: C.muted }}>Confidence: {d.confidence ?? "—"} · Suitability: {d.suitability?.level === "low" ? "Outside profile" : (d.suitability?.level ?? "—")}</Text>
+              <View style={{ flexDirection: "row", alignItems: "center", flexWrap: "wrap" }}>
+                <Text style={{ fontSize: 13, color: C.muted }}>Confidence: {d.confidence ?? "No data"}</Text>
+                <Tip term="confidence" />
+              </View>
+              <View style={{ flexDirection: "row", alignItems: "center", flexWrap: "wrap" }}>
+                <Text style={{ fontSize: 13, color: C.muted }}>Fit: {d.suitability?.level === "low" ? "Outside profile" : (d.suitability?.level ?? "Not checked yet")}</Text>
+                <Tip term="suitability" />
+              </View>
             </View>
           </View>
           {d.recommendation && (
@@ -108,14 +135,20 @@ export default function StockDetail() {
           </View>
         </Card>
         <Card>
-          <Text style={{ fontWeight: "800", color: C.text, marginBottom: 8 }}>Numbers</Text>
-          {[
-            ["ROE", d.financials?.roe != null ? `${(Number(d.financials.roe) * 100).toFixed(1)}%` : "—"],
-            ["Dividend yield", d.dividendYield != null ? `${(d.dividendYield * 100).toFixed(1)}%` : "—"],
-            ["Volatility", d.volatility != null ? `${(d.volatility * 100).toFixed(0)}%` : "—"],
-          ].map(([k, v]) => (
-            <View key={k} style={{ flexDirection: "row", justifyContent: "space-between", paddingVertical: 6, borderBottomWidth: 1, borderBottomColor: C.border }}>
-              <Text style={{ color: C.muted }}>{k}</Text>
+          <Text style={{ fontWeight: "800", color: C.text, marginBottom: 4 }}>Numbers (tap ? for plain meaning)</Text>
+          <Text style={{ fontSize: 12, color: C.muted, marginBottom: 8 }}>EXAMPLE: company profits and dividends are still examples. Price above is {d.source === "ngx-delayed" ? "real NGX (delayed)" : "also an example"}.</Text>
+          {(
+            [
+            ["ROE", "roe", d.financials?.roe != null ? `${(Number(d.financials.roe) * 100).toFixed(1)}%` : "No data"],
+            ["Dividend yield", "yield", d.dividendYield != null ? `${(d.dividendYield * 100).toFixed(1)}%` : "No data"],
+            ["Volatility", "volatility", d.volatility != null ? `${(d.volatility * 100).toFixed(0)}%` : "No data"],
+            ] as [string, string, string][]
+          ).map(([k, tip, v]) => (
+            <View key={k} style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingVertical: 6, borderBottomWidth: 1, borderBottomColor: C.border }}>
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <Text style={{ color: C.muted }}>{k}</Text>
+                <Tip term={tip} />
+              </View>
               <Text style={{ fontWeight: "700", color: C.text }}>{v}</Text>
             </View>
           ))}

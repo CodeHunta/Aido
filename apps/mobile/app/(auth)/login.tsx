@@ -39,6 +39,9 @@ export default function Login() {
       <Link href="/(auth)/signup" style={{ color: C.cobalt, fontWeight: "700", marginTop: 4 }}>
         New here? Create account →
       </Link>
+      <Link href="/forgot" style={{ color: C.cobalt, fontWeight: "700", marginTop: 12 }}>
+        Forgot password?
+      </Link>
       <Link href="/methodology" style={{ color: C.muted, marginTop: 12, fontSize: 13 }}>
         How Aido thinks →
       </Link>

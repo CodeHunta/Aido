@@ -6,7 +6,7 @@ import type { Profile } from "../lib/types";
 import { Btn, C, Card, Field, H1, Loading, Sub } from "../lib/ui";
 
 export default function ProfileScreen() {
-  const { authedFetch, logout, user } = useAuth();
+  const { authedFetch, logout, changePassword, deleteAccount, user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [risk, setRisk] = useState("moderate");
   const [horizon, setHorizon] = useState("long");
@@ -14,6 +14,11 @@ export default function ProfileScreen() {
   const [capital, setCapital] = useState("");
   const [frequency, setFrequency] = useState("monthly");
   const [msg, setMsg] = useState("");
+  const [currentPw, setCurrentPw] = useState("");
+  const [nextPw, setNextPw] = useState("");
+  const [pwMsg, setPwMsg] = useState("");
+  const [delConfirm, setDelConfirm] = useState("");
+  const [delMsg, setDelMsg] = useState("");
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -27,7 +32,7 @@ export default function ProfileScreen() {
         if (p.capitalKobo) setCapital(String(p.capitalKobo / 100));
       }
     } catch {
-      // fresh account — defaults stand
+      // fresh account, so defaults stand
     } finally {
       setLoading(false);
     }
@@ -72,7 +77,53 @@ export default function ProfileScreen() {
           <Field placeholder="once / monthly / irregular" value={frequency} onChange={setFrequency} />
           <Btn title="Save profile" onPress={save} primary />
           {!!msg && <Text style={{ fontSize: 13, color: C.muted, marginTop: 6 }}>{msg}</Text>}
-          <Text style={{ fontSize: 11, color: C.muted, marginTop: 8 }}>Options — risk: {opts(["conservative", "moderate", "aggressive"])}</Text>
+          <Text style={{ fontSize: 11, color: C.muted, marginTop: 8 }}>Options. Risk: {opts(["conservative", "moderate", "aggressive"])}</Text>
+        </Card>
+        <Card>
+          <Text style={{ fontWeight: "800", fontSize: 16, color: C.text }}>Change password</Text>
+          <Field placeholder="Current password" value={currentPw} onChange={setCurrentPw} secret />
+          <Field placeholder="New password (8+ chars)" value={nextPw} onChange={setNextPw} secret />
+          <Btn
+            title="Change password"
+            onPress={async () => {
+              if (nextPw.length < 8) {
+                setPwMsg("New password needs at least 8 characters.");
+                return;
+              }
+              setPwMsg("Saving…");
+              try {
+                await changePassword(currentPw, nextPw);
+                setPwMsg("Password changed.");
+                setCurrentPw("");
+                setNextPw("");
+              } catch (e) {
+                setPwMsg(e instanceof Error ? e.message : "Could not change it.");
+              }
+            }}
+            primary
+          />
+          {!!pwMsg && <Text style={{ fontSize: 13, color: C.muted, marginTop: 6 }}>{pwMsg}</Text>}
+        </Card>
+        <Card>
+          <Text style={{ fontWeight: "800", fontSize: 16, color: C.text }}>Delete account</Text>
+          <Text style={{ color: C.muted, fontSize: 13, marginTop: 4 }}>This removes your profile, portfolio, watchlist, alerts and settings for good. This cannot be undone.</Text>
+          <Field placeholder="Type DELETE to confirm" value={delConfirm} onChange={(v) => setDelConfirm(v.toUpperCase())} />
+          <Btn
+            title="Delete my account"
+            onPress={async () => {
+              if (delConfirm.trim() !== "DELETE") {
+                setDelMsg("Type DELETE in the box to confirm.");
+                return;
+              }
+              setDelMsg("Deleting…");
+              try {
+                await deleteAccount();
+              } catch (e) {
+                setDelMsg(e instanceof Error ? e.message : "Could not delete.");
+              }
+            }}
+          />
+          {!!delMsg && <Text style={{ fontSize: 13, color: C.muted, marginTop: 6 }}>{delMsg}</Text>}
         </Card>
         <Btn title="Log out" onPress={logout} />
       </View>

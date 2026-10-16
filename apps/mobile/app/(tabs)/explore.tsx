@@ -4,7 +4,7 @@ import { FlatList, Pressable, Text, TextInput, View } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { useAuth } from "../../lib/auth";
 import type { Stock } from "../../lib/types";
-import { ActionBadge, C, Card, Empty, H1, Loading, naira } from "../../lib/ui";
+import { ActionBadge, Btn, C, Card, Empty, H1, Loading, naira } from "../../lib/ui";
 
 const TABS = ["all", "stocks", "etfs", "reits"] as const;
 const PER_PAGE = 20;
@@ -16,14 +16,17 @@ export default function Explore() {
   const [tab, setTab] = useState<(typeof TABS)[number]>("all");
   const [q, setQ] = useState("");
   const [page, setPage] = useState(1);
+  const [failed, setFailed] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
+    setFailed(false);
     try {
       const data = (await authedFetch("/stocks?sort=ticker")) as Stock[];
       setStocks(Array.isArray(data) ? data : []);
     } catch {
       setStocks([]);
+      setFailed(true);
     } finally {
       setLoading(false);
     }
@@ -35,7 +38,7 @@ export default function Explore() {
     }, [load]),
   );
 
-  // API has no asset filter yet — filter client-side like the tape does.
+  // API has no asset filter yet, so filter client-side like the tape does.
   const filtered = stocks.filter((s) => {
     if (tab === "stocks" && (s.asset ?? "stock") !== "stock") return false;
     if (tab === "etfs" && s.asset !== "etf") return false;
@@ -52,6 +55,13 @@ export default function Explore() {
   return (
     <View style={{ flex: 1, backgroundColor: C.bg, padding: 16 }}>
       <H1>Explore</H1>
+      <Card>
+        <Text style={{ fontSize: 13, color: C.text, lineHeight: 19 }}>
+          <Text style={{ fontWeight: "800" }}>Prices: real NGX</Text>
+          <Text> (delayed). Except WAPCO, FLOURMILL, MRS (examples). </Text>
+          <Text style={{ fontWeight: "800" }}>Profits and dividends: examples for now.</Text>
+        </Text>
+      </Card>
       <View style={{ flexDirection: "row", gap: 8, marginBottom: 10, flexWrap: "wrap" }}>
         {TABS.map((t) => (
           <Pressable key={t} onPress={() => { setTab(t); setPage(1); }} style={{ paddingHorizontal: 12, paddingVertical: 7, borderRadius: 10, backgroundColor: tab === t ? C.text : C.card, borderWidth: 1, borderColor: C.border }}>
@@ -60,7 +70,13 @@ export default function Explore() {
         ))}
       </View>
       <TextInput placeholder="Search ticker or name" value={q} onChangeText={(v) => { setQ(v); setPage(1); }} autoCapitalize="none" placeholderTextColor={C.muted} style={{ borderColor: C.border, borderWidth: 1, borderRadius: 12, padding: 10, backgroundColor: C.card, color: C.text, marginBottom: 10 }} />
-      {slice.length === 0 ? (
+      {failed && stocks.length === 0 ? (
+        <Empty
+          title="Could not reach Aido"
+          body="Check your internet. The computer running Aido may also be asleep."
+          action={<Btn title="Try again" onPress={load} primary />}
+        />
+      ) : slice.length === 0 ? (
         <Empty title="No matches" body="Try a shorter search or another tab." />
       ) : (
         <FlatList
@@ -76,7 +92,7 @@ export default function Explore() {
                       <Text style={{ color: C.muted, fontSize: 12 }} numberOfLines={1}>{s.name}</Text>
                     </View>
                     <Text style={{ fontWeight: "800", color: C.text }}>{naira(s.closeKobo)}</Text>
-                    <Text style={{ fontWeight: "800", color: C.text, width: 30, textAlign: "right" }}>{s.score ?? "—"}</Text>
+                    <Text style={{ fontWeight: "800", color: C.text, width: 30, textAlign: "right" }}>{s.score ?? "No data"}</Text>
                     <ActionBadge action={s.action} />
                   </View>
                 </Card>

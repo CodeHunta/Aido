@@ -33,6 +33,11 @@ body {
 .pill-no-signal { background: #e2e8f0; color: #334155; }
 table.tbl { width: 100%; border-collapse: collapse; font-size: 14px; table-layout: fixed; }
 table.tbl th, table.tbl td { text-align: left; padding: 8px; border-bottom: 1px solid var(--border); overflow: hidden; }
+/* Small phones: wide tables scroll sideways instead of squeezing. */
+.tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -4px; padding: 0 4px; }
+.tbl-wrap table.tbl { min-width: 560px; }
+/* Offline banner shown when the browser reports no internet. */
+.offline-bar { background: #fef3c7; color: #92400e; border-bottom: 1px solid #fde68a; font-size: 13px; font-weight: 700; text-align: center; padding: 8px 12px; }
 table.tbl th.num, table.tbl td.num { text-align: right; font-variant-numeric: tabular-nums; }
 .ellipsis { display: inline-block; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: bottom; }
 .sticky-nav { position: sticky; top: 0; z-index: 50; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }

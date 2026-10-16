@@ -44,10 +44,10 @@ export function analyzePortfolio(holdings: HoldingInput[]): PortfolioAnalysis {
     .map(([key, value]) => ({ key, weight: valueKobo > 0 ? value / valueKobo : 0, valueKobo: value }))
     .sort((a, b) => b.weight - a.weight);
   const weaknesses: string[] = [];
-  if (topWeight > 0.25) weaknesses.push(`One stock is ${(topWeight * 100).toFixed(0)}% — over the 25% safety line`);
+  if (topWeight > 0.25) weaknesses.push(`One stock is ${(topWeight * 100).toFixed(0)}%, which is over the 25% safety line`);
   if (allocation.length > 0 && allocation[0]!.weight > 0.5)
-    weaknesses.push(`${allocation[0]!.key} is ${(allocation[0]!.weight * 100).toFixed(0)}% — sector-heavy`);
-  if (holdings.length > 0 && holdings.length < 3) weaknesses.push("Only a few stocks — one shock hits hard");
+    weaknesses.push(`${allocation[0]!.key} is ${(allocation[0]!.weight * 100).toFixed(0)}%. That is sector-heavy`);
+  if (holdings.length > 0 && holdings.length < 3) weaknesses.push("Only a few stocks, so one shock hits hard");
   return {
     valueKobo,
     costKobo,

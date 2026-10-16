@@ -43,7 +43,7 @@ function PreviewMock() {
             </svg>
             <div>
               <span className="pill pill-buy">BUY</span> <strong>CONOIL</strong>
-              <div style={{ fontSize: 13, color: "var(--muted)" }}>Pays 6.1% — feeds your combination goal</div>
+              <div style={{ fontSize: 13, color: "var(--muted)" }}>Pays 6.1%, which feeds your combination goal</div>
             </div>
           </div>
           <ul style={{ fontSize: 14, marginTop: 12, paddingLeft: 18 }}>
@@ -68,8 +68,8 @@ export default function Landing() {
           <p style={{ fontSize: 13, fontWeight: 800, letterSpacing: 3, color: COBALT }}>WELCOME TO AIDO</p>
           <h1 style={{ fontSize: 52, lineHeight: 1.05, letterSpacing: -2, margin: "12px 0" }}>Know what the market means for you.</h1>
           <p style={{ fontSize: 18, color: "var(--muted)", maxWidth: 460 }}>
-            Aido turns noisy Nigerian stock-market data into clear, personal investment moves —
-            BUY, HOLD, SELL or WATCH — always with the why.
+            Aido turns noisy Nigerian stock-market data into clear, personal investment moves:
+            BUY, HOLD, SELL or WATCH, always with the why.
           </p>
           <div style={{ display: "flex", gap: 12, marginTop: 24, flexWrap: "wrap" }}>
             <a href="/signup" className="btn-primary btn-lg">Get started</a>
@@ -85,17 +85,17 @@ export default function Landing() {
           <Card>
             <div style={{ width: 48, height: 48, borderRadius: "50%", background: "#E8F0FE", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22 }}>◉</div>
             <h3>Opportunity ≠ suitability</h3>
-            <p style={{ color: "var(--muted)", fontSize: 15 }}>A great stock can be wrong for you. Aido scores the market and your personal fit separately — misfits stay visible, never hidden.</p>
+            <p style={{ color: "var(--muted)", fontSize: 15 }}>A great stock can be wrong for you. Aido scores the market and your personal fit separately. Misfits stay visible, never hidden.</p>
           </Card>
           <Card>
             <div style={{ width: 48, height: 48, borderRadius: "50%", background: "#E8F0FE", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22 }}>✎</div>
             <h3>Every call explained</h3>
-            <p style={{ color: "var(--muted)", fontSize: 15 }}>Why now, why for you, what could go wrong — plus the full thesis behind every BUY, HOLD, SELL or WATCH.</p>
+            <p style={{ color: "var(--muted)", fontSize: 15 }}>Why now, why for you, what could go wrong, plus the full thesis behind every BUY, HOLD, SELL or WATCH.</p>
           </Card>
           <Card>
             <div style={{ width: 48, height: 48, borderRadius: "50%", background: "#E8F0FE", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22 }}>▦</div>
             <h3>Your portfolio, watched</h3>
-            <p style={{ color: "var(--muted)", fontSize: 15 }}>Live values, concentration warnings, and a personal pick every Sunday — with alerts only when something material changes.</p>
+            <p style={{ color: "var(--muted)", fontSize: 15 }}>Live values, concentration warnings, and a personal pick every Sunday, with alerts only when something material changes.</p>
           </Card>
         </div>
       </section>
@@ -105,7 +105,7 @@ export default function Landing() {
         <ol style={{ fontSize: 17, lineHeight: 2 }}>
           <li><strong>1. Create your profile.</strong> Three quick steps: goal, risk, horizon.</li>
           <li><strong>2. Get your Sunday pick.</strong> One stock, scored 0–100, matched to you and your portfolio.</li>
-          <li><strong>3. Track and get alerted.</strong> Watchlist pings and rating changes — never noise.</li>
+            <li><strong>3. Track and get alerted.</strong> Watchlist pings and rating changes. Never noise.</li>
         </ol>
       </section>
 

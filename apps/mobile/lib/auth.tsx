@@ -16,6 +16,8 @@ interface AuthCtx {
   login: (email: string, password: string) => Promise<void>;
   signup: (name: string, email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
+  deleteAccount: () => Promise<void>;
   authedFetch: (path: string, init?: RequestInit) => Promise<unknown>;
 }
 
@@ -36,7 +38,7 @@ async function authed(path: string, init: RequestInit = {}): Promise<Response> {
   return fetch(`${apiBase()}${path}`, { ...init, headers });
 }
 
-// The server answers { ok, data } — unwrap it or throw a readable message.
+// The server answers { ok, data }. Unwrap it or throw a readable message.
 export async function unwrap<T>(res: Response): Promise<T> {
   const body = (await res.json().catch(() => null)) as { ok?: boolean; data?: T; error?: string } | null;
   if (!res.ok || body?.ok !== true) throw new ApiError(body?.error ?? `Server error (${res.status})`, res.status);
@@ -99,7 +101,7 @@ type AuthBody = { token?: string; error?: { message?: string } | string };
     const body = (await res.json().catch(() => null)) as AuthBody | null;
     if (!res.ok || !body?.token) {
       const err = body?.error;
-      throw new Error(typeof err === "string" ? err : (err?.message ?? "Login failed — check email and password."));
+      throw new Error(typeof err === "string" ? err : (err?.message ?? "Login failed. Please check your email and password."));
     }
     await establishSession(body.token);
     await refresh();
@@ -115,7 +117,7 @@ type AuthBody = { token?: string; error?: { message?: string } | string };
       const body = (await res.json().catch(() => null)) as AuthBody | null;
       if (!res.ok || !body?.token) {
         const err = body?.error;
-        throw new Error(typeof err === "string" ? err : (err?.message ?? "Signup failed — try another email."));
+        throw new Error(typeof err === "string" ? err : (err?.message ?? "Signup failed. Please try another email."));
       }
       await establishSession(body.token);
       await refresh();
@@ -140,7 +142,27 @@ type AuthBody = { token?: string; error?: { message?: string } | string };
     return unwrap<unknown>(res);
   }, []);
 
-  return <Ctx.Provider value={{ user, loading, login, signup, logout, authedFetch }}>{children}</Ctx.Provider>;
+  const changePassword = useCallback(async (currentPassword: string, newPassword: string) => {
+    const cookie = await readCookie();
+    const res = await fetch(`${webBase()}/api/auth/change-password`, {
+      method: "POST",
+      headers: { "content-type": "application/json", ...(cookie ? { Cookie: cookie } : {}) },
+      body: JSON.stringify({ currentPassword, newPassword }),
+    });
+    const body = (await res.json().catch(() => null)) as { error?: { message?: string } | string } | null;
+    if (!res.ok) {
+      const err = body?.error;
+      throw new Error(typeof err === "string" ? err : (err?.message ?? "Could not change the password."));
+    }
+  }, []);
+
+  const deleteAccount = useCallback(async () => {
+    await authedFetch("/account", { method: "DELETE" });
+    await SecureStore.deleteItemAsync(COOKIE_KEY);
+    setUser(null);
+  }, [authedFetch]);
+
+  return <Ctx.Provider value={{ user, loading, login, signup, logout, changePassword, deleteAccount, authedFetch }}>{children}</Ctx.Provider>;
 }
 
 export function useAuth(): AuthCtx {

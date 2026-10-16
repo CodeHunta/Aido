@@ -5,6 +5,7 @@ import { getTraits } from "@aido/db/traits";
 import { analyzePortfolio } from "@aido/scoring";
 import { HoldingForm, RemoveButton } from "../_actions";
 import { Card, naira } from "../_ui";
+import { Tip } from "../_glossary";
 import { currentUserId } from "../lib/session";
 import { Nav } from "../_nav";
 
@@ -25,16 +26,17 @@ export default async function Portfolio() {
       <h1 style={{ fontSize: 28, fontWeight: 800 }}>Portfolio</h1>
       {inputs.length === 0 ? (
         <Card>
-          <h3 style={{ marginTop: 0 }}>Nothing here yet — that's the fun part</h3>
-          <p style={{ fontSize: 14, color: "var(--muted)" }}>Record a stock you own (ticker, quantity, what you paid). Aido tracks its live value, gains, sector mix and warns you about concentration — automatically, from then on.</p>
+          <h3 style={{ marginTop: 0 }}>Nothing here yet. That is the fun part</h3>
+          <p style={{ fontSize: 14, color: "var(--muted)" }}>Record a stock you own (ticker, quantity, what you paid). Aido tracks its live value, gains, sector mix and warns you about concentration, automatically from then on.</p>
         </Card>
       ) : null}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 16, margin: "12px 0" }}>
-        <Card><div style={{ fontSize: 12, color: "var(--muted)", fontWeight: 800 }}>VALUE</div><div className="num" style={{ fontSize: 22, fontWeight: 800 }}>{naira(a.valueKobo)}</div></Card>
-        <Card><div style={{ fontSize: 12, color: "var(--muted)", fontWeight: 800 }}>GAIN/LOSS</div><div className="num" style={{ fontSize: 22, fontWeight: 800, color: a.pnlKobo >= 0 ? "#16a34a" : "#dc2626" }}>{naira(a.pnlKobo)} ({(a.pnlPct * 100).toFixed(1)}%)</div></Card>
-        <Card><div style={{ fontSize: 12, color: "var(--muted)", fontWeight: 800 }}>DIVIDEND YIELD</div><div className="num" style={{ fontSize: 22, fontWeight: 800 }}>{(a.dividendYield * 100).toFixed(1)}%</div></Card>
+        <Card><div style={{ fontSize: 12, color: "var(--muted)", fontWeight: 800 }}>VALUE <Tip term="price" /></div><div className="num" style={{ fontSize: 22, fontWeight: 800 }}>{naira(a.valueKobo)}</div><div style={{ fontSize: 12, color: "var(--muted)" }}>What all your stocks are worth now.</div></Card>
+        <Card><div style={{ fontSize: 12, color: "var(--muted)", fontWeight: 800 }}>GAIN/LOSS <Tip term="gain" /></div><div className="num" style={{ fontSize: 22, fontWeight: 800, color: a.pnlKobo >= 0 ? "#16a34a" : "#dc2626" }}>{naira(a.pnlKobo)} ({(a.pnlPct * 100).toFixed(1)}%)</div></Card>
+        <Card><div style={{ fontSize: 12, color: "var(--muted)", fontWeight: 800 }}>DIVIDEND YIELD <Tip term="yield" /></div><div className="num" style={{ fontSize: 22, fontWeight: 800 }}>{(a.dividendYield * 100).toFixed(1)}%</div><div style={{ fontSize: 12, color: "var(--muted)" }}>Yearly cash you may get for holding these.</div></Card>
       </div>
       <Card>
+        <div className="tbl-wrap">
         <table className="tbl">
           <colgroup><col style={{ width: "20%" }} /><col style={{ width: "13%" }} /><col style={{ width: "16%" }} /><col style={{ width: "16%" }} /><col style={{ width: "19%" }} /><col style={{ width: "16%" }} /></colgroup>
           <thead><tr><th>Stock</th><th className="num">Qty</th><th className="num">Avg cost</th><th className="num">Price</th><th className="num">Value</th><th></th></tr></thead>
@@ -51,10 +53,12 @@ export default async function Portfolio() {
             ))}
           </tbody>
         </table>
+        </div>
         <HoldingForm userId={USER} />
       </Card>
       <Card>
-        <div style={{ marginTop: 16 }}><h3>Sectors</h3>
+        <div style={{ marginTop: 16 }}><h3>Sectors <Tip term="allocation" /></h3>
+          <p style={{ fontSize: 13, color: "var(--muted)" }}>Where your money sits. If one bar is very long, one bad event hurts you more.</p>
           {a.allocation.map((s) => <div key={s.key} style={{ display: "flex", gap: 8, alignItems: "center", fontSize: 14 }}><span style={{ width: 160 }}>{s.key}</span><div style={{ flex: 1, height: 10, background: "var(--border)", borderRadius: 999 }}><div style={{ width: `${s.weight * 100}%`, height: "100%", background: "#2563eb", borderRadius: 999 }} /></div><span className="num">{(s.weight * 100).toFixed(0)}%</span></div>)}
           {a.weaknesses.length > 0 && <><h3>Weaknesses</h3><ul>{a.weaknesses.map((w) => <li key={w}>{w}</li>)}</ul></>}
         </div>

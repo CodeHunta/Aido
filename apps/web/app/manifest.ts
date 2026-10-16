@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Aido — NGX Investment Intelligence",
+    name: "Aido: NGX Investment Intelligence",
     short_name: "Aido",
     description: "Don't just know what the market is doing. Know what it means for you.",
     start_url: "/dashboard",

@@ -3,7 +3,7 @@ import { useCallback, useState } from "react";
 import { RefreshControl, ScrollView, Text, View } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { useAuth } from "../../lib/auth";
-import { ActionBadge, C, Card, H1, Loading, ScoreRing, naira } from "../../lib/ui";
+import { ActionBadge, Btn, C, Card, H1, Loading, ScoreRing, naira } from "../../lib/ui";
 
 interface Pick {
   ticker: string;
@@ -20,16 +20,25 @@ export default function Dashboard() {
   const [value, setValue] = useState(0);
   const [personal, setPersonal] = useState<Pick | null>(null);
   const [market, setMarket] = useState<Pick | null>(null);
+  const [failed, setFailed] = useState(false);
 
   const load = useCallback(
     async (quiet = false) => {
       if (!quiet) setLoading(true);
+      setFailed(false);
       try {
-        const [pf, wl, picks] = await Promise.all([
-          authedFetch("/portfolio").catch(() => [] as unknown[]),
-          authedFetch("/watchlist").catch(() => [] as unknown[]),
-          authedFetch("/picks/current").catch(() => null as unknown),
+        const [pfR, wlR, picksR] = await Promise.allSettled([
+          authedFetch("/portfolio"),
+          authedFetch("/watchlist"),
+          authedFetch("/picks/current"),
         ]);
+        if (pfR.status === "rejected" && wlR.status === "rejected" && picksR.status === "rejected") {
+          setFailed(true);
+          return;
+        }
+        const pf = pfR.status === "fulfilled" ? pfR.value : [];
+        const wl = wlR.status === "fulfilled" ? wlR.value : [];
+        const picks = picksR.status === "fulfilled" ? picksR.value : null;
         const rows = Array.isArray(pf) ? (pf as { qty: number; priceKobo: number | null }[]) : [];
         setHoldings(rows.length);
         setWatched(Array.isArray(wl) ? wl.length : 0);
@@ -37,6 +46,7 @@ export default function Dashboard() {
         const p = picks as { personal?: Pick | null; market?: Pick | null } | null;
         setPersonal(p?.personal ?? null);
         setMarket(p?.market ?? null);
+        if (pfR.status === "rejected" || wlR.status === "rejected" || picksR.status === "rejected") setFailed(true);
       } finally {
         setLoading(false);
         setRefreshing(false);
@@ -59,6 +69,13 @@ export default function Dashboard() {
       <View style={{ padding: 16 }}>
         <Text style={{ fontSize: 12, fontWeight: "800", letterSpacing: 3, color: C.muted }}>AIDO DASHBOARD</Text>
         <H1>Good morning, {first}</H1>
+        {failed ? (
+          <Card>
+            <Text style={{ fontWeight: "800", color: C.text }}>Could not reach Aido</Text>
+            <Text style={{ color: C.muted, fontSize: 14, marginTop: 4 }}>Check your internet. The computer running Aido may also be asleep.</Text>
+            <Btn title="Try again" onPress={() => load()} primary />
+          </Card>
+        ) : null}
         <Card>
           <Text style={{ fontSize: 12, color: C.muted, fontWeight: "800" }}>PORTFOLIO</Text>
           <Text style={{ fontSize: 24, fontWeight: "800", color: C.text }}>{naira(value)}</Text>
@@ -90,14 +107,16 @@ export default function Dashboard() {
               </View>
             </View>
           ) : (
-            <Text style={{ color: C.muted }}>—</Text>
+            <Text style={{ color: C.muted }}>No pick this week.</Text>
           )}
         </Card>
         <Link href="/alerts" style={{ color: C.cobalt, fontWeight: "700" }}>Alerts →</Link>
+        <Text style={{ color: C.muted, fontSize: 12, marginTop: 10 }}>Prices: real NGX (delayed). Company numbers: still examples.</Text>
         <View style={{ flexDirection: "row", gap: 16, marginTop: 10, flexWrap: "wrap" }}>
           <Link href="/compare" style={{ color: C.cobalt, fontWeight: "700" }}>Compare</Link>
           <Link href="/premium" style={{ color: C.cobalt, fontWeight: "700" }}>Premium</Link>
           <Link href="/profile" style={{ color: C.cobalt, fontWeight: "700" }}>Profile</Link>
+          <Link href="/help" style={{ color: C.cobalt, fontWeight: "700" }}>Help</Link>
           <Link href="/methodology" style={{ color: C.muted, fontSize: 13 }}>How Aido thinks →</Link>
         </View>
       </View>

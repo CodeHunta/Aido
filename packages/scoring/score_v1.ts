@@ -111,7 +111,7 @@ function riskInverse(i: StockInputs): { score: number; notes: string[] } {
   }
   if (i.avgDailyValueKobo != null && i.avgDailyValueKobo < 5e8) {
     parts.push(35);
-    notes.push("thin trading — hard to exit fast");
+    notes.push("thin trading, so it is hard to exit fast");
   } else parts.push(75);
   if (i.payoutRatio != null && i.payoutRatio > G.payoutCap) {
     parts.push(30);
@@ -190,7 +190,7 @@ export function scoreStock(i: StockInputs): ScoreResult {
   const keyRisk = !worstNote
     ? `${worst.n} looks stretched`
     : worstNote.includes("not yet available")
-      ? `Limited data — ${worstNote}`
+      ? `Limited data. ${worstNote}`
       : `${worst.n}: ${worstNote}`;
   const whyNow =
     v.notes[0] ?? (m.notes[0] ? `Market is moving (${m.notes[0]}).` : "Current price versus history.");

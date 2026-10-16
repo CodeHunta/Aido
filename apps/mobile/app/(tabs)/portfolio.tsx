@@ -5,6 +5,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useAuth } from "../../lib/auth";
 import type { Holding } from "../../lib/types";
 import { Btn, C, Card, Empty, Field, H1, Loading, Sub, naira } from "../../lib/ui";
+import { LabelWithTip } from "../../lib/glossary";
 
 export default function Portfolio() {
   const { authedFetch } = useAuth();
@@ -15,15 +16,18 @@ export default function Portfolio() {
   const [qty, setQty] = useState("");
   const [price, setPrice] = useState("");
   const [msg, setMsg] = useState("");
+  const [failed, setFailed] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
+    setFailed(false);
     try {
       const [h, a] = await Promise.all([authedFetch("/portfolio"), authedFetch("/portfolio/analysis")]);
       setRows(Array.isArray(h) ? (h as Holding[]) : []);
       setAnalysis(a as typeof analysis);
     } catch {
       setRows([]);
+      setFailed(true);
     } finally {
       setLoading(false);
     }
@@ -60,17 +64,30 @@ export default function Portfolio() {
   }
 
   if (loading) return <Loading />;
+  if (failed && rows.length === 0)
+    return (
+      <View style={{ flex: 1, backgroundColor: C.bg, padding: 16 }}>
+        <H1>Portfolio</H1>
+        <Empty
+          title="Could not reach Aido"
+          body="Check your internet. The computer running Aido may also be asleep."
+          action={<Btn title="Try again" onPress={load} primary />}
+        />
+      </View>
+    );
   return (
     <ScrollView style={{ flex: 1, backgroundColor: C.bg }}>
       <View style={{ padding: 16 }}>
         <H1>Portfolio</H1>
         {analysis && (
           <Card>
-            <Text style={{ fontSize: 12, color: C.muted, fontWeight: "800" }}>VALUE</Text>
+            <LabelWithTip label="VALUE: what all your stocks are worth now" term="price" />
             <Text style={{ fontSize: 22, fontWeight: "800", color: C.text }}>{naira(analysis.valueKobo)}</Text>
+            <LabelWithTip label="GAIN / LOSS vs what you paid" term="gain" />
             <Text style={{ fontWeight: "800", color: analysis.pnlKobo >= 0 ? C.buy : C.sell }}>
               {naira(analysis.pnlKobo)} ({(analysis.pnlPct * 100).toFixed(1)}%)
             </Text>
+            <LabelWithTip label="Yearly cash you may get" term="dividend" />
             <Text style={{ color: C.muted, fontSize: 13 }}>Div yield {(analysis.dividendYield * 100).toFixed(1)}%</Text>
           </Card>
         )}

@@ -22,6 +22,7 @@ export default function Login() {
           <input name="email" placeholder="Email" type="email" className="input" required />
           <input name="password" placeholder="Password" type="password" className="input" required />
           <button className="btn" type="submit">Log in</button>
+          <a href="/forgot" style={{ fontSize: 13, fontWeight: 700 }}>Forgot password?</a>
           <span style={{ fontSize: 13 }}>{msg}</span>
         </form>
       </Card>

@@ -4,6 +4,7 @@ const LINKS = [
   ["Explore", "/explore"],
   ["How it works", "/methodology"],
   ["Premium", "/premium"],
+  ["Help", "/help"],
 ];
 
 // Static menu for logged-out pages (login, signup, forgot, reset, premium).
