@@ -2,6 +2,7 @@
   "name": "aido",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@12.6.0",
   "description": "Aido — NGX investment intelligence platform",
   "scripts": {
     "dev": "turbo run dev",
