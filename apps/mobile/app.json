@@ -19,7 +19,7 @@
       }
     },
     "extra": {
-      "apiUrl": "http://192.168.100.65:3000/api/v1",
+      "apiUrl": "https://aido-intellisense.netlify.app/api/v1",
       "eas": {
         "projectId": "60e17481-da9e-419f-92d6-4bad2db46826"
       }
