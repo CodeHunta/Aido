@@ -14,7 +14,11 @@ function Gate({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (loading) return;
     const inAuth = segments[0] === "(auth)";
-    if (!user && !inAuth) router.replace("/(auth)/login");
+    // /forgot sits outside the (auth) group, so it needs its own whitelist.
+    // Without this the gate bounced logged-out users straight back to login,
+    // which is why the "Forgot password?" link appeared dead.
+    const allowedWhenLoggedOut = inAuth || segments[0] === "forgot";
+    if (!user && !allowedWhenLoggedOut) router.replace("/(auth)/login");
     else if (user && inAuth) router.replace("/(tabs)");
   }, [user, loading, segments, router]);
 
