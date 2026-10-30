@@ -63,3 +63,23 @@ export function PicksIcon({ size, color }: { size?: number; color: string }) {
     </Svg>
   );
 }
+
+export function EyeIcon({ size, color }: { size?: number; color: string }) {
+  return (
+    <Svg {...Base({ size, color })}>
+      <Path d="M2.6 12S6 5.8 12 5.8 21.4 12 21.4 12 18 18.2 12 18.2 2.6 12 2.6 12Z" />
+      <Circle cx="12" cy="12" r="2.9" />
+    </Svg>
+  );
+}
+
+export function EyeOffIcon({ size, color }: { size?: number; color: string }) {
+  return (
+    <Svg {...Base({ size, color })}>
+      <Path d="M3 3l18 18" />
+      <Path d="M10.6 6.1A9.6 9.6 0 0 1 12 6c6 0 9.4 6 9.4 6a17 17 0 0 1-2.6 3.4" />
+      <Path d="M6.3 7.5A16.6 16.6 0 0 0 2.6 12S6 18 12 18a9.4 9.4 0 0 0 3.6-.7" />
+      <Path d="M9.9 10a2.9 2.9 0 0 0 4.1 4.1" />
+    </Svg>
+  );
+}

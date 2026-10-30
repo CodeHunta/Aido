@@ -249,6 +249,9 @@ export const users = pgTable("users", {
   emailVerified: boolean("email_verified").notNull().default(false),
   name: text("name"),
   image: text("image"),
+  // "user" | "superadmin". Deliberately a plain column rather than Better Auth's
+  // admin plugin: no extra tables, no plugin lock-in, one UPDATE to promote.
+  role: text("role").notNull().default("user"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });

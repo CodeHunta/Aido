@@ -1,6 +1,7 @@
 import React from "react";
-import { ActivityIndicator, Pressable, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import Svg, { Circle, Text as SvgText } from "react-native-svg";
+import { EyeIcon, EyeOffIcon } from "./icons";
 
 export const C = {
   bg: "#f8fafc",
@@ -28,8 +29,21 @@ export const C = {
 export const naira = (kobo: number | null | undefined): string =>
   kobo == null ? "No data" : "₦" + (kobo / 100).toLocaleString("en-NG", { maximumFractionDigits: kobo >= 100000 ? 0 : 2 });
 
-export function Screen({ children }: { children: React.ReactNode }) {
-  return <View style={{ flex: 1, backgroundColor: C.bg, padding: 16 }}>{children}</View>;
+// `center` is for the auth screens: content sits in the middle of the screen
+// instead of hugging the top edge, and scrolls when the keyboard opens.
+export function Screen({ children, center }: { children: React.ReactNode; center?: boolean }) {
+  if (!center) return <View style={{ flex: 1, backgroundColor: C.bg, padding: 16 }}>{children}</View>;
+  return (
+    <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={{ flex: 1, backgroundColor: C.bg }}>
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1, justifyContent: "center", padding: 24 }}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        {children}
+      </ScrollView>
+    </KeyboardAvoidingView>
+  );
 }
 
 export function H1({ children }: { children: React.ReactNode }) {
@@ -93,17 +107,42 @@ export function Btn({ title, onPress, disabled, primary }: { title: string; onPr
 }
 
 export function Field({ placeholder, value, onChange, secret, keyboard }: { placeholder: string; value: string; onChange: (v: string) => void; secret?: boolean; keyboard?: "default" | "numeric" | "email-address" }) {
+  const [hidden, setHidden] = React.useState(true);
+  const toggle = !!secret;
   return (
-    <TextInput
-      placeholder={placeholder}
-      value={value}
-      onChangeText={onChange}
-      secureTextEntry={secret}
-      keyboardType={keyboard ?? "default"}
-      autoCapitalize="none"
-      placeholderTextColor={C.muted}
-      style={{ borderColor: C.border, borderWidth: 1, borderRadius: 12, padding: 12, fontSize: 15, color: C.text, backgroundColor: C.card, marginBottom: 10 }}
-    />
+    <View style={{ justifyContent: "center", marginBottom: 10 }}>
+      <TextInput
+        placeholder={placeholder}
+        value={value}
+        onChangeText={onChange}
+        secureTextEntry={toggle ? hidden : false}
+        keyboardType={keyboard ?? "default"}
+        autoCapitalize="none"
+        autoCorrect={false}
+        placeholderTextColor={C.muted}
+        style={{
+          borderColor: C.border,
+          borderWidth: 1,
+          borderRadius: 12,
+          padding: 12,
+          paddingRight: toggle ? 48 : 12,
+          fontSize: 15,
+          color: C.text,
+          backgroundColor: C.card,
+        }}
+      />
+      {toggle ? (
+        <Pressable
+          onPress={() => setHidden((h) => !h)}
+          hitSlop={8}
+          accessibilityRole="button"
+          accessibilityLabel={hidden ? "Show password" : "Hide password"}
+          style={{ position: "absolute", right: 6, padding: 8 }}
+        >
+          {hidden ? <EyeIcon size={20} color={C.muted} /> : <EyeOffIcon size={20} color={C.cobalt} />}
+        </Pressable>
+      ) : null}
+    </View>
   );
 }
 

@@ -32,7 +32,7 @@ export default function Signup() {
   }
 
   return (
-    <Screen>
+    <Screen center>
       <H1>Create account</H1>
       <Sub>Free to start. Thirty seconds.</Sub>
       <Card>

@@ -27,7 +27,7 @@ export default function Login() {
   }
 
   return (
-    <Screen>
+    <Screen center>
       <H1>Log in</H1>
       <Sub>Welcome back to your NGX intelligence.</Sub>
       <Card>

@@ -6,6 +6,7 @@ import { analyzePortfolio, suitFor } from "@aido/scoring";
 import { ActionBadge, Card, ScoreRing, naira } from "../_ui";
 import { Tip } from "../_glossary";
 import { currentUserId } from "../lib/session";
+import { greeting } from "../lib/greeting";
 import { Nav } from "../_nav";
 
 export const dynamic = "force-dynamic";
@@ -44,7 +45,7 @@ export default async function Dashboard() {
     <main style={{ maxWidth: 960, margin: "0 auto", padding: "24px 16px" }}>
       <Nav />
       <p style={{ fontSize: 12, fontWeight: 800, letterSpacing: 3, color: "var(--muted)" }}>AIDO DASHBOARD</p>
-      <h1 style={{ fontSize: 32, fontWeight: 800, margin: "4px 0 16px" }}>Good morning, {firstName}</h1>
+      <h1 style={{ fontSize: 32, fontWeight: 800, margin: "4px 0 16px" }}>{greeting()}, {firstName}</h1>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: 16 }}>
         <Card>
           <div style={{ fontSize: 12, color: "var(--muted)", fontWeight: 800 }}>PORTFOLIO</div>

@@ -3,6 +3,7 @@ import { useCallback, useState } from "react";
 import { RefreshControl, ScrollView, Text, View } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { useAuth } from "../../lib/auth";
+import { greeting } from "../../lib/greeting";
 import { ActionBadge, Btn, C, Card, H1, Loading, ScoreRing, naira } from "../../lib/ui";
 
 interface Pick {
@@ -68,11 +69,11 @@ export default function Dashboard() {
     <ScrollView style={{ flex: 1, backgroundColor: C.bg }} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); load(true); }} />}>
       <View style={{ padding: 16 }}>
         <Text style={{ fontSize: 12, fontWeight: "800", letterSpacing: 3, color: C.muted }}>AIDO DASHBOARD</Text>
-        <H1>Good morning, {first}</H1>
+        <H1>{greeting()}, {first}</H1>
         {failed ? (
           <Card>
             <Text style={{ fontWeight: "800", color: C.text }}>Could not reach Aido</Text>
-            <Text style={{ color: C.muted, fontSize: 14, marginTop: 4 }}>Check your internet. The computer running Aido may also be asleep.</Text>
+            <Text style={{ color: C.muted, fontSize: 14, marginTop: 4 }}>Check your internet connection and try again.</Text>
             <Btn title="Try again" onPress={() => load()} primary />
           </Card>
         ) : null}
