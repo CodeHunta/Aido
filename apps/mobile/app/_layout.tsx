@@ -14,10 +14,11 @@ function Gate({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (loading) return;
     const inAuth = segments[0] === "(auth)";
-    // /forgot sits outside the (auth) group, so it needs its own whitelist.
-    // Without this the gate bounced logged-out users straight back to login,
-    // which is why the "Forgot password?" link appeared dead.
-    const allowedWhenLoggedOut = inAuth || segments[0] === "forgot";
+    // Screens outside the (auth) group that must work before login. Without
+    // this the gate bounced logged-out users back to login, which is why the
+    // "Forgot password?" and "How Aido thinks" links appeared dead.
+    const publicRoutes = ["forgot", "methodology", "help", "terms", "privacy"];
+    const allowedWhenLoggedOut = inAuth || publicRoutes.includes(segments[0] ?? "");
     if (!user && !allowedWhenLoggedOut) router.replace("/(auth)/login");
     else if (user && inAuth) router.replace("/(tabs)");
   }, [user, loading, segments, router]);
