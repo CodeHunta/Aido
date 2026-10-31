@@ -32,6 +32,11 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.NEON_DATABASE_URL }}
           DATABASE_SSL: require
+      # One row per user per day: powers the admin portfolio-value history.
+      - run: pnpm --filter @aido/worker snapshot
+        env:
+          DATABASE_URL: ${{ secrets.NEON_DATABASE_URL }}
+          DATABASE_SSL: require
       - run: pnpm --filter @aido/worker weekly
         env:
           DATABASE_URL: ${{ secrets.NEON_DATABASE_URL }}

@@ -11,6 +11,7 @@
     "sql": "tsx ./jobs/sql.ts",
     "demo:phase5": "tsx ./jobs/demo5.ts",
     "weekly": "tsx ./jobs/weekly.ts",
+    "snapshot": "tsx ./jobs/snapshot.ts",
     "lint": "tsc --noEmit"
   },
   "dependencies": {

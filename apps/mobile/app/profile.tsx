@@ -13,6 +13,7 @@ export default function ProfileScreen() {
   const [objective, setObjective] = useState("growth");
   const [capital, setCapital] = useState("");
   const [frequency, setFrequency] = useState("monthly");
+  const [age, setAge] = useState("");
   const [msg, setMsg] = useState("");
   const [currentPw, setCurrentPw] = useState("");
   const [nextPw, setNextPw] = useState("");
@@ -30,6 +31,7 @@ export default function ProfileScreen() {
         setObjective(p.objective);
         setFrequency(p.frequency);
         if (p.capitalKobo) setCapital(String(p.capitalKobo / 100));
+        if (p.age != null) setAge(String(p.age));
       }
     } catch {
       // fresh account, so defaults stand
@@ -45,11 +47,16 @@ export default function ProfileScreen() {
   );
 
   async function save() {
+    const ageNum = age.trim() === "" ? null : Math.trunc(Number(age));
+    if (ageNum !== null && (!Number.isFinite(ageNum) || ageNum < 13 || ageNum > 120)) {
+      setMsg("Age must be between 13 and 120, or leave it blank.");
+      return;
+    }
     setMsg("Saving…");
     try {
       await authedFetch("/profiles/me", {
         method: "PUT",
-        body: JSON.stringify({ risk, horizon, objective, capitalKobo: Math.round(Number(capital || 0) * 100), frequency }),
+        body: JSON.stringify({ risk, horizon, objective, capitalKobo: Math.round(Number(capital || 0) * 100), frequency, age: ageNum }),
       });
       setMsg("Saved.");
     } catch (e) {
@@ -73,6 +80,8 @@ export default function ProfileScreen() {
           <Field placeholder="growth / dividend / income / preservation / combination" value={objective} onChange={setObjective} />
           <Text style={{ fontWeight: "700", color: C.text, marginBottom: 4 }}>Capital ₦</Text>
           <Field placeholder="e.g. 500000" value={capital} onChange={setCapital} keyboard="numeric" />
+          <Text style={{ fontWeight: "700", color: C.text, marginBottom: 4 }}>Age (optional)</Text>
+          <Field placeholder="e.g. 34" value={age} onChange={setAge} keyboard="numeric" maxLength={3} />
           <Text style={{ fontWeight: "700", color: C.text, marginBottom: 4 }}>Frequency: {frequency}</Text>
           <Field placeholder="once / monthly / irregular" value={frequency} onChange={setFrequency} />
           <Btn title="Save profile" onPress={save} primary />
@@ -107,11 +116,11 @@ export default function ProfileScreen() {
         <Card>
           <Text style={{ fontWeight: "800", fontSize: 16, color: C.text }}>Delete account</Text>
           <Text style={{ color: C.muted, fontSize: 13, marginTop: 4 }}>This removes your profile, portfolio, watchlist, alerts and settings for good. This cannot be undone.</Text>
-          <Field placeholder="Type DELETE to confirm" value={delConfirm} onChange={(v) => setDelConfirm(v.toUpperCase())} />
+          <Field placeholder="Type DELETE to confirm" value={delConfirm} onChange={setDelConfirm} autoCapitalize="characters" maxLength={6} />
           <Btn
             title="Delete my account"
             onPress={async () => {
-              if (delConfirm.trim() !== "DELETE") {
+              if (delConfirm.trim().toUpperCase() !== "DELETE") {
                 setDelMsg("Type DELETE in the box to confirm.");
                 return;
               }

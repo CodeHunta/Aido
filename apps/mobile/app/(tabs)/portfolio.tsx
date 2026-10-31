@@ -41,10 +41,17 @@ export default function Portfolio() {
 
   async function save() {
     setMsg("");
+    // Uppercase once, here. Uppercasing inside onChange rewrote the controlled
+    // value on every keypress, which is what made typing and deleting erratic.
+    const symbol = ticker.trim().toUpperCase();
+    if (!symbol) {
+      setMsg("Enter a ticker, for example GTCO.");
+      return;
+    }
     try {
       const j = (await authedFetch("/portfolio", {
         method: "POST",
-        body: JSON.stringify({ ticker, qty: Number(qty), avgCostKobo: Math.round(Number(price) * 100) }),
+        body: JSON.stringify({ ticker: symbol, qty: Number(qty), avgCostKobo: Math.round(Number(price) * 100) }),
       })) as { added?: string; accumulated?: string; soldAll?: string; qty?: number; avgCostKobo?: number };
       if (j.soldAll) setMsg(`Sold all ${j.soldAll}.`);
       else if (j.accumulated) setMsg(`Now ${j.qty?.toLocaleString()} @ ₦${((j.avgCostKobo ?? 0) / 100).toLocaleString()}.`);
@@ -110,7 +117,7 @@ export default function Portfolio() {
         )}
         <Card>
           <Sub>Save holding (+qty buy / −qty sell)</Sub>
-          <Field placeholder="TICKER" value={ticker} onChange={(v) => setTicker(v.toUpperCase())} />
+          <Field placeholder="TICKER" value={ticker} onChange={setTicker} autoCapitalize="characters" maxLength={12} />
           <Field placeholder="Qty" value={qty} onChange={setQty} keyboard="numeric" />
           <Field placeholder="Price ₦" value={price} onChange={setPrice} keyboard="numeric" />
           <Btn title="Save" onPress={save} primary />

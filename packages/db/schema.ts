@@ -37,6 +37,9 @@ export const investorProfiles = pgTable("investor_profiles", {
   objective: objectiveEnum("objective").notNull().default("growth"),
   capitalKobo: bigint("capital_kobo", { mode: "number" }).notNull().default(0),
   frequency: frequencyEnum("frequency").notNull().default("monthly"),
+  // Optional so existing accounts are not forced to answer. Used only in
+  // aggregate form on the admin analytics dashboard.
+  age: integer("age"),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
 

@@ -38,4 +38,5 @@ export interface Profile {
   objective: string;
   capitalKobo: number;
   frequency: string;
+  age: number | null;
 }

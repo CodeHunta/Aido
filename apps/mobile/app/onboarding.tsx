@@ -30,17 +30,23 @@ export default function Onboarding() {
   const [risk, setRisk] = useState("moderate");
   const [horizon, setHorizon] = useState("long");
   const [frequency, setFrequency] = useState("monthly");
+  const [age, setAge] = useState("");
   const [msg, setMsg] = useState("");
   const [busy, setBusy] = useState(false);
 
   async function finish() {
     if (busy) return;
+    const ageNum = age.trim() === "" ? null : Math.trunc(Number(age));
+    if (ageNum !== null && (!Number.isFinite(ageNum) || ageNum < 13 || ageNum > 120)) {
+      setMsg("Age must be between 13 and 120, or leave it blank.");
+      return;
+    }
     setBusy(true);
     setMsg("Saving…");
     try {
       await authedFetch("/profiles/me", {
         method: "PUT",
-        body: JSON.stringify({ risk, horizon, objective, capitalKobo: Math.round(Number(capital || 0) * 100), frequency }),
+        body: JSON.stringify({ risk, horizon, objective, capitalKobo: Math.round(Number(capital || 0) * 100), frequency, age: ageNum }),
       });
       router.replace("/(tabs)");
     } catch (e) {
@@ -62,6 +68,8 @@ export default function Onboarding() {
             <Pick opts={OBJECTIVES} value={objective} onPick={setObjective} />
             <Sub>Starting amount in ₦</Sub>
             <Field placeholder="e.g. 500000" value={capital} onChange={setCapital} keyboard="numeric" />
+            <Sub>Your age (optional)</Sub>
+            <Field placeholder="e.g. 34" value={age} onChange={setAge} keyboard="numeric" maxLength={3} />
           </>
         )}
         {step === 2 && (

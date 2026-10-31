@@ -106,7 +106,26 @@ export function Btn({ title, onPress, disabled, primary }: { title: string; onPr
   );
 }
 
-export function Field({ placeholder, value, onChange, secret, keyboard }: { placeholder: string; value: string; onChange: (v: string) => void; secret?: boolean; keyboard?: "default" | "numeric" | "email-address" }) {
+export function Field({
+  placeholder,
+  value,
+  onChange,
+  secret,
+  keyboard,
+  autoCapitalize = "none",
+  maxLength,
+}: {
+  placeholder: string;
+  value: string;
+  onChange: (v: string) => void;
+  secret?: boolean;
+  keyboard?: "default" | "numeric" | "email-address";
+  // "characters" is for tickers. Never transform the value in onChange: doing
+  // that on every keystroke fights Android's input method and makes keys
+  // repeat, reorder, or paste text back while deleting.
+  autoCapitalize?: "none" | "sentences" | "words" | "characters";
+  maxLength?: number;
+}) {
   const [hidden, setHidden] = React.useState(true);
   const toggle = !!secret;
   return (
@@ -117,8 +136,12 @@ export function Field({ placeholder, value, onChange, secret, keyboard }: { plac
         onChangeText={onChange}
         secureTextEntry={toggle ? hidden : false}
         keyboardType={keyboard ?? "default"}
-        autoCapitalize="none"
+        autoCapitalize={autoCapitalize}
         autoCorrect={false}
+        spellCheck={false}
+        autoComplete="off"
+        importantForAutofill="no"
+        maxLength={maxLength}
         placeholderTextColor={C.muted}
         style={{
           borderColor: C.border,

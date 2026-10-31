@@ -48,7 +48,7 @@ export default function Help() {
         </Card>
         <Card>
           <Text style={{ fontWeight: "800", fontSize: 16, color: C.text }}>Report wrong data</Text>
-          <Field placeholder="Ticker, e.g. GTCO" value={ticker} onChange={(v) => setTicker(v.toUpperCase())} />
+          <Field placeholder="Ticker, e.g. GTCO" value={ticker} onChange={setTicker} autoCapitalize="characters" maxLength={12} />
           <Field placeholder="What did you see?" value={seen} onChange={setSeen} />
           <Btn title="Open report email" onPress={report} primary />
           {!!msg && <Text style={{ fontSize: 13, color: C.muted, marginTop: 6 }}>{msg}</Text>}
