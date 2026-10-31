@@ -15,7 +15,8 @@ export function ago(d: Date | string | null | undefined): string {
 
 export function naira(kobo: number | null | undefined): string {
   if (kobo == null) return "No data";
-  return "₦" + (kobo / 100).toLocaleString("en-NG", { maximumFractionDigits: 0 });
+  // Keep kobo precision: ₦1,408.89 must not be shown as ₦1,409.
+  return "₦" + (kobo / 100).toLocaleString("en-NG", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
 }
 
 export function compactNaira(kobo: number | null | undefined): string {

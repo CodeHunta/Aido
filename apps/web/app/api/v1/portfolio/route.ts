@@ -19,8 +19,16 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   const userId = await userOf(req);
   const body = (await req.json().catch(() => null)) as { ticker?: string; qty?: number; avgCostKobo?: number } | null;
-  if (!body?.ticker || !body.qty || body.qty === 0 || body.avgCostKobo == null || body.avgCostKobo < 0) {
-    return bad("Need ticker, qty (not 0. Use a negative number to sell), and avgCostKobo (0 or more)");
+  if (
+    !body?.ticker ||
+    typeof body.qty !== "number" ||
+    !Number.isInteger(body.qty) ||
+    body.qty === 0 ||
+    typeof body.avgCostKobo !== "number" ||
+    !Number.isFinite(body.avgCostKobo) ||
+    body.avgCostKobo < 0
+  ) {
+    return bad("Need ticker, a whole-number qty (not 0. Use a negative number to sell), and avgCostKobo (0 or more)");
   }
   const ticker = body.ticker.toUpperCase();
   const t = await getTraits(ticker);

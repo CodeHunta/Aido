@@ -2,7 +2,7 @@
   "expo": {
     "name": "Aido",
     "slug": "aido",
-    "version": "0.3.5",
+    "version": "0.3.6",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "scheme": "aido",
@@ -12,7 +12,7 @@
     },
     "android": {
       "package": "com.codehunta.aido",
-      "versionCode": 8,
+      "versionCode": 9,
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#0047AB"
