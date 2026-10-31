@@ -2,7 +2,7 @@ import { and, eq } from "@aido/db/drizzle";
 import { db } from "@aido/db";
 import { watchlists } from "@aido/db/schema";
 import { getTraits } from "@aido/db/traits";
-import { bad, ok, userOf } from "../_lib";
+import { bad, logEvent, ok, userOf } from "../_lib";
 
 export const dynamic = "force-dynamic";
 
@@ -24,7 +24,8 @@ export async function POST(req: Request) {
   const ticker = body.ticker.toUpperCase();
   const t = await getTraits(ticker);
   if (!t) return bad("Unknown ticker", 404);
-  await db.insert(watchlists).values({ userId, ticker }).onConflictDoNothing();
+  const added = await db.insert(watchlists).values({ userId, ticker }).onConflictDoNothing().returning({ ticker: watchlists.ticker });
+  if (added.length) await logEvent(userId, "watchlist.added", { ticker });
   return ok({ watched: ticker });
 }
 
@@ -32,6 +33,10 @@ export async function DELETE(req: Request) {
   const userId = await userOf(req);
   const ticker = (new URL(req.url).searchParams.get("ticker") ?? "").toUpperCase();
   if (!ticker) return bad("Need ?ticker=");
-  await db.delete(watchlists).where(and(eq(watchlists.userId, userId), eq(watchlists.ticker, ticker)));
+  const removed = await db
+    .delete(watchlists)
+    .where(and(eq(watchlists.userId, userId), eq(watchlists.ticker, ticker)))
+    .returning({ ticker: watchlists.ticker });
+  if (removed.length) await logEvent(userId, "watchlist.removed", { ticker });
   return ok({ unwatched: ticker });
 }

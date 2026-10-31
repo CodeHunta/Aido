@@ -1,7 +1,7 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "@aido/db";
-import { accounts, investorProfiles, sessions, users, verifications } from "@aido/db/schema";
+import { accounts, auditLogs, investorProfiles, sessions, users, verifications } from "@aido/db/schema";
 import { resetPasswordHtml, sendEmail } from "@aido/email";
 
 // Email + password today. Google/Apple plug in here once OAuth keys exist
@@ -39,6 +39,18 @@ export const auth: ReturnType<typeof betterAuth> = betterAuth({
       create: {
         after: async (user) => {
           await db.insert(investorProfiles).values({ userId: user.id }).onConflictDoNothing();
+          // Give the admin timeline a permanent record of the signup. Best
+          // effort: analytics must never block account creation.
+          try {
+            await db.insert(auditLogs).values({
+              id: crypto.randomUUID(),
+              userId: user.id,
+              action: "account.created",
+              meta: { email: user.email },
+            });
+          } catch {
+            // ignore
+          }
         },
       },
     },

@@ -1,6 +1,8 @@
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { auth } from "@aido/auth/auth";
+import { db } from "@aido/db";
+import { auditLogs } from "@aido/db/schema";
 
 export const dynamic = "force-dynamic";
 export const DEFAULT_USER = "demo-moderate";
@@ -24,4 +26,15 @@ export function ok(data: unknown, asOf?: string | null) {
 
 export function bad(message: string, status = 400) {
   return NextResponse.json({ ok: false, error: message }, { status });
+}
+
+// Append-only history for the admin analytics dashboard. Never let analytics
+// break the action the person actually asked for, and never log demo traffic.
+export async function logEvent(userId: string, action: string, meta: Record<string, unknown> = {}) {
+  if (!userId || userId.startsWith("demo-")) return;
+  try {
+    await db.insert(auditLogs).values({ id: crypto.randomUUID(), userId, action, meta });
+  } catch {
+    // best effort only
+  }
 }

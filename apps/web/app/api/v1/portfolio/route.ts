@@ -2,7 +2,7 @@ import { and, eq } from "@aido/db/drizzle";
 import { db } from "@aido/db";
 import { portfolios } from "@aido/db/schema";
 import { getTraits } from "@aido/db/traits";
-import { bad, ok, userOf } from "../_lib";
+import { bad, logEvent, ok, userOf } from "../_lib";
 
 export const dynamic = "force-dynamic";
 
@@ -29,6 +29,7 @@ export async function POST(req: Request) {
   if (!existing) {
     if (body.qty < 0) return bad("You don't hold this stock yet, so you can't sell");
     await db.insert(portfolios).values({ userId, ticker, qty: body.qty, avgCostKobo: body.avgCostKobo });
+    await logEvent(userId, "portfolio.added", { ticker, qty: body.qty, avgCostKobo: body.avgCostKobo });
     return ok({ added: ticker, qty: body.qty, avgCostKobo: body.avgCostKobo });
   }
   // Broker-style averaging: buys accumulate and re-average, sells reduce at same average.
@@ -37,10 +38,12 @@ export async function POST(req: Request) {
   const newQty = oldQty + body.qty;
   if (newQty <= 0) {
     await db.delete(portfolios).where(and(eq(portfolios.userId, userId), eq(portfolios.ticker, ticker)));
+    await logEvent(userId, "portfolio.sold_all", { ticker });
     return ok({ soldAll: ticker });
   }
   const newAvg = body.qty > 0 ? Math.round((oldQty * oldAvg + body.qty * body.avgCostKobo) / newQty) : oldAvg;
   await db.update(portfolios).set({ qty: newQty, avgCostKobo: newAvg }).where(and(eq(portfolios.userId, userId), eq(portfolios.ticker, ticker)));
+  await logEvent(userId, "portfolio.accumulated", { ticker, qty: body.qty, newQty });
   return ok({ accumulated: ticker, qty: newQty, avgCostKobo: newAvg });
 }
 
@@ -48,6 +51,10 @@ export async function DELETE(req: Request) {
   const userId = await userOf(req);
   const ticker = (new URL(req.url).searchParams.get("ticker") ?? "").toUpperCase();
   if (!ticker) return bad("Need ?ticker=");
-  await db.delete(portfolios).where(and(eq(portfolios.userId, userId), eq(portfolios.ticker, ticker)));
+  const removed = await db
+    .delete(portfolios)
+    .where(and(eq(portfolios.userId, userId), eq(portfolios.ticker, ticker)))
+    .returning({ ticker: portfolios.ticker });
+  if (removed.length) await logEvent(userId, "portfolio.removed", { ticker });
   return ok({ removed: ticker });
 }

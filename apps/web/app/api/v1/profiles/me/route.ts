@@ -2,7 +2,7 @@ import { eq } from "@aido/db/drizzle";
 import { db } from "@aido/db";
 import { investorProfiles } from "@aido/db/schema";
 import { getProfile } from "@aido/db/traits";
-import { bad, ok, userOf } from "../../_lib";
+import { bad, logEvent, ok, userOf } from "../../_lib";
 
 export const dynamic = "force-dynamic";
 
@@ -80,5 +80,6 @@ export async function PUT(req: Request) {
       age: patch.age ?? null,
     });
   }
+  await logEvent(userId, "profile.updated", { fields: Object.keys(patch) });
   return ok(await getProfile(userId));
 }
