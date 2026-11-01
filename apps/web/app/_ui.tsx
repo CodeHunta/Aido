@@ -1,6 +1,7 @@
 export function naira(kobo: number | null | undefined): string {
   if (kobo == null) return "No data";
-  return "₦" + (kobo / 100).toLocaleString("en-NG", { maximumFractionDigits: 2 });
+  const sign = kobo < 0 ? "-" : "";
+  return sign + "₦" + (Math.abs(kobo) / 100).toLocaleString("en-NG", { maximumFractionDigits: 2 });
 }
 
 export function ActionBadge({ action }: { action: string | null }) {

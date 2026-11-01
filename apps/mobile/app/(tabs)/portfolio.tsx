@@ -147,19 +147,33 @@ export default function Portfolio() {
         {rows.length === 0 ? (
           <Empty title="Nothing here yet" body="Record a stock you own. Aido tracks its live value and warns about concentration." />
         ) : (
-          rows.map((h) => (
-            <Card key={h.ticker}>
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <View style={{ flex: 1 }}>
-                  <Link href={`/stocks/${h.ticker}`} style={{ fontWeight: "800", fontSize: 16, color: C.text }}>{h.ticker}</Link>
-                  <Text style={{ color: C.muted, fontSize: 13 }}>{h.qty.toLocaleString()} @ {naira(h.avgCostKobo)} · now {naira(h.priceKobo)}</Text>
+          rows.map((h) => {
+            const cost = h.qty * h.avgCostKobo;
+            const value = h.priceKobo == null ? null : h.qty * h.priceKobo;
+            const gain = value == null ? null : value - cost;
+            const pct = gain == null || cost === 0 ? null : gain / cost;
+            return (
+              <Card key={h.ticker}>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <View style={{ flex: 1 }}>
+                    <Link href={`/stocks/${h.ticker}`} style={{ fontWeight: "800", fontSize: 16, color: C.text }}>{h.ticker}</Link>
+                    <Text style={{ color: C.muted, fontSize: 13 }}>{h.qty.toLocaleString()} @ {naira(h.avgCostKobo)} · now {naira(h.priceKobo)}</Text>
+                    {gain == null ? (
+                      <Text style={{ color: C.muted, fontSize: 13, marginTop: 2 }}>Gain / loss: no live price yet</Text>
+                    ) : (
+                      <Text style={{ color: gain >= 0 ? C.buy : C.sell, fontWeight: "700", fontSize: 13, marginTop: 2 }}>
+                        {gain >= 0 ? "Gain" : "Loss"} {naira(Math.abs(gain))}
+                        {pct == null ? "" : ` (${pct >= 0 ? "+" : ""}${(pct * 100).toFixed(1)}%)`}
+                      </Text>
+                    )}
+                  </View>
+                  <Pressable onPress={() => remove(h.ticker)} style={{ borderWidth: 1, borderColor: C.border, borderRadius: 10, padding: 8 }}>
+                    <Text style={{ fontWeight: "700" }}>Remove</Text>
+                  </Pressable>
                 </View>
-                <Pressable onPress={() => remove(h.ticker)} style={{ borderWidth: 1, borderColor: C.border, borderRadius: 10, padding: 8 }}>
-                  <Text style={{ fontWeight: "700" }}>Remove</Text>
-                </Pressable>
-              </View>
-            </Card>
-          ))
+              </Card>
+            );
+          })
         )}
         <Card>
           <Sub>Save holding (+qty buy / −qty sell)</Sub>

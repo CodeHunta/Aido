@@ -15,17 +15,21 @@ export function ago(d: Date | string | null | undefined): string {
 
 export function naira(kobo: number | null | undefined): string {
   if (kobo == null) return "No data";
-  // Keep kobo precision: ₦1,408.89 must not be shown as ₦1,409.
-  return "₦" + (kobo / 100).toLocaleString("en-NG", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+  // Keep kobo precision: ₦1,408.89 must not be shown as ₦1,409. Losses read
+  // -₦1,234, not ₦-1,234.
+  const sign = kobo < 0 ? "-" : "";
+  return sign + "₦" + (Math.abs(kobo) / 100).toLocaleString("en-NG", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
 }
 
 export function compactNaira(kobo: number | null | undefined): string {
   if (kobo == null) return "No data";
   const n = kobo / 100;
-  if (Math.abs(n) >= 1_000_000_000) return `₦${(n / 1_000_000_000).toFixed(1)}b`;
-  if (Math.abs(n) >= 1_000_000) return `₦${(n / 1_000_000).toFixed(1)}m`;
-  if (Math.abs(n) >= 1_000) return `₦${(n / 1_000).toFixed(1)}k`;
-  return `₦${n.toFixed(0)}`;
+  const sign = n < 0 ? "-" : "";
+  const abs = Math.abs(n);
+  if (abs >= 1_000_000_000) return `${sign}₦${(abs / 1_000_000_000).toFixed(1)}b`;
+  if (abs >= 1_000_000) return `${sign}₦${(abs / 1_000_000).toFixed(1)}m`;
+  if (abs >= 1_000) return `${sign}₦${(abs / 1_000).toFixed(1)}k`;
+  return `${sign}₦${abs.toFixed(0)}`;
 }
 
 export function titleCase(value: string | null | undefined): string {

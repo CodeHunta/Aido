@@ -27,9 +27,13 @@ export const C = {
 };
 
 // Always keep kobo precision. Rounding a ₦1,408.89 cost to ₦1,409 makes the
-// saved price look wrong even though the stored value is exact.
-export const naira = (kobo: number | null | undefined): string =>
-  kobo == null ? "No data" : "₦" + (kobo / 100).toLocaleString("en-NG", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+// saved price look wrong even though the stored value is exact. Negative
+// amounts read -₦1,234 rather than ₦-1,234.
+export const naira = (kobo: number | null | undefined): string => {
+  if (kobo == null) return "No data";
+  const sign = kobo < 0 ? "-" : "";
+  return sign + "₦" + (Math.abs(kobo) / 100).toLocaleString("en-NG", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+};
 
 // `center` is for the auth screens: content sits in the middle of the screen
 // instead of hugging the top edge, and scrolls when the keyboard opens.
