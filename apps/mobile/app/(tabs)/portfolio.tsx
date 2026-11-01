@@ -1,6 +1,6 @@
 import { Link } from "expo-router";
 import { useCallback, useRef, useState } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { Alert, Pressable, ScrollView, Text, View } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { useAuth } from "../../lib/auth";
 import type { Holding } from "../../lib/types";
@@ -16,6 +16,7 @@ export default function Portfolio() {
   const [qty, setQty] = useState("");
   const [price, setPrice] = useState("");
   const [msg, setMsg] = useState("");
+  const [notice, setNotice] = useState("");
   const [failed, setFailed] = useState(false);
   // A ref, not just state: it flips synchronously, so even two taps in the same
   // frame cannot send the same holding twice.
@@ -33,6 +34,7 @@ export default function Portfolio() {
   const load = useCallback(async () => {
     setLoading(true);
     setFailed(false);
+    setNotice("");
     try {
       const d = await fetchData();
       setRows(d.rows);
@@ -112,8 +114,26 @@ export default function Portfolio() {
   }
 
   async function remove(t: string) {
-    await authedFetch(`/portfolio?ticker=${t}`, { method: "DELETE" }).catch(() => null);
-    await load();
+    try {
+      await authedFetch(`/portfolio?ticker=${t}`, { method: "DELETE" });
+      setNotice(`Removed ${t}.`);
+      await refresh();
+    } catch (e) {
+      setNotice(e instanceof Error ? e.message : `Could not remove ${t}.`);
+    }
+  }
+
+  // Removing a holding used to happen on the first tap, so a stray touch lost
+  // the record. Ask first, and keep "Keep it" as the easy way out.
+  function confirmRemove(t: string) {
+    Alert.alert(
+      `Remove ${t}?`,
+      `This deletes your ${t} record from Aido. It does not sell the shares.`,
+      [
+        { text: "Keep it", style: "cancel" },
+        { text: "Remove", style: "destructive", onPress: () => { void remove(t); } },
+      ],
+    );
   }
 
   if (loading) return <Loading />;
@@ -132,6 +152,7 @@ export default function Portfolio() {
     <ScrollView style={{ flex: 1, backgroundColor: C.bg }} keyboardShouldPersistTaps="handled">
       <View style={{ padding: 16 }}>
         <H1>Portfolio</H1>
+        {!!notice && <Text style={{ fontSize: 13, color: C.text, marginBottom: 8 }}>{notice}</Text>}
         {analysis && (
           <Card>
             <LabelWithTip label="VALUE: what all your stocks are worth now" term="price" />
@@ -167,7 +188,7 @@ export default function Portfolio() {
                       </Text>
                     )}
                   </View>
-                  <Pressable onPress={() => remove(h.ticker)} style={{ borderWidth: 1, borderColor: C.border, borderRadius: 10, padding: 8 }}>
+                  <Pressable onPress={() => confirmRemove(h.ticker)} style={{ borderWidth: 1, borderColor: C.border, borderRadius: 10, padding: 8 }}>
                     <Text style={{ fontWeight: "700" }}>Remove</Text>
                   </Pressable>
                 </View>
