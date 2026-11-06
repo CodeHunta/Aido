@@ -48,13 +48,13 @@ export default async function Portfolio() {
                 <td className="num">{naira(h.avgCostKobo)}</td>
                 <td className="num">{naira(h.priceKobo)}</td>
                 <td className="num">{naira(h.qty * h.priceKobo)}</td>
-                <td><RemoveButton ticker={h.ticker} kind="portfolio" userId={USER} /></td>
+                <td><RemoveButton ticker={h.ticker} kind="portfolio" /></td>
               </tr>
             ))}
           </tbody>
         </table>
         </div>
-        <HoldingForm userId={USER} />
+        <HoldingForm />
       </Card>
       <Card>
         <div style={{ marginTop: 16 }}><h3>Sectors <Tip term="allocation" /></h3>

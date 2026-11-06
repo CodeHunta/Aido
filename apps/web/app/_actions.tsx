@@ -2,32 +2,49 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-export function WatchButton({ ticker, watched, userId }: { ticker: string; watched: boolean; userId: string }) {
-  const [on, setOn] = useState(watched);
-  const [busy, setBusy] = useState(false);
-  async function toggle() {
-    setBusy(true);
-    const url = on ? `/api/v1/watchlist?user=${userId}&ticker=${ticker}` : `/api/v1/watchlist?user=${userId}`;
-    const r = await fetch(url, { method: on ? "DELETE" : "POST", headers: { "content-type": "application/json" }, body: on ? undefined : JSON.stringify({ ticker }) });
-    setBusy(false);
-    if (r.ok) setOn(!on);
-  }
-  return <button className="btn" onClick={toggle} disabled={busy}>{on ? "✓ Watching" : "+ Watch"}</button>;
+function loginHref() {
+  if (typeof window === "undefined") return "/login";
+  return `/login?next=${encodeURIComponent(window.location.pathname)}`;
 }
 
-export function HoldingForm({ userId }: { userId: string }) {
+export function WatchButton({ ticker, watched }: { ticker: string; watched: boolean }) {
+  const [on, setOn] = useState(watched);
+  const [busy, setBusy] = useState(false);
+  const [needLogin, setNeedLogin] = useState(false);
+  async function toggle() {
+    setBusy(true);
+    setNeedLogin(false);
+    const url = on ? `/api/v1/watchlist?ticker=${ticker}` : "/api/v1/watchlist";
+    const r = await fetch(url, { method: on ? "DELETE" : "POST", headers: { "content-type": "application/json" }, body: on ? undefined : JSON.stringify({ ticker }) });
+    setBusy(false);
+    if (r.status === 401) { setNeedLogin(true); return; }
+    if (r.ok) setOn(!on);
+  }
+  return (
+    <span>
+      <button className="btn" onClick={toggle} disabled={busy}>{on ? "✓ Watching" : "+ Watch"}</button>
+      {needLogin && <span style={{ fontSize: 12, marginLeft: 8 }}><a href={loginHref()}>Log in to save</a></span>}
+    </span>
+  );
+}
+
+export function HoldingForm() {
   const router = useRouter();
   const [msg, setMsg] = useState("");
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
     const fd = new FormData(form);
-    const r = await fetch(`/api/v1/portfolio?user=${userId}`, {
+    const r = await fetch("/api/v1/portfolio", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ ticker: String(fd.get("ticker")), qty: Number(fd.get("qty")), avgCostKobo: Math.round(Number(fd.get("price")) * 100) }),
     });
     const j = await r.json().catch(() => null);
+    if (r.status === 401) {
+      setMsg("Log in to change your portfolio.");
+      return;
+    }
     if (!r.ok) {
       setMsg(`Failed: ${j?.error ?? "check ticker"}`);
       return;
@@ -50,15 +67,23 @@ export function HoldingForm({ userId }: { userId: string }) {
   );
 }
 
-export function RemoveButton({ ticker, kind, userId }: { ticker: string; kind: "portfolio" | "watchlist"; userId: string }) {
+export function RemoveButton({ ticker, kind }: { ticker: string; kind: "portfolio" | "watchlist" }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
+  const [needLogin, setNeedLogin] = useState(false);
   async function remove() {
     setBusy(true);
+    setNeedLogin(false);
     const base = kind === "portfolio" ? "/api/v1/portfolio" : "/api/v1/watchlist";
-    const r = await fetch(`${base}?user=${userId}&ticker=${ticker}`, { method: "DELETE" });
+    const r = await fetch(`${base}?ticker=${ticker}`, { method: "DELETE" });
     setBusy(false);
+    if (r.status === 401) { setNeedLogin(true); return; }
     if (r.ok) router.refresh();
   }
-  return <button className="btn" onClick={remove} disabled={busy}>Remove</button>;
+  return (
+    <span>
+      <button className="btn" onClick={remove} disabled={busy}>Remove</button>
+      {needLogin && <span style={{ fontSize: 12, marginLeft: 8 }}><a href={loginHref()}>Log in</a></span>}
+    </span>
+  );
 }

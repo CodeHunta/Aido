@@ -16,15 +16,15 @@ import {
   watchlists,
   weeklyPicks,
 } from "@aido/db";
-import { bad, ok, userOf } from "../_lib";
+import { bad, ok, sessionUserId } from "../_lib";
 
 export const dynamic = "force-dynamic";
 
 // Delete everything Aido stores about you, then the account itself.
 // Log out on the client after calling this.
-export async function DELETE(req: Request) {
-  const userId = await userOf(req);
-  if (!userId || userId === "demo-moderate") return bad("Log in to delete your account.", 401);
+export async function DELETE() {
+  const userId = await sessionUserId();
+  if (!userId) return bad("Log in to delete your account.", 401);
   const me = (await db.select().from(users).where(eq(users.id, userId)))[0];
   if (!me) return bad("Account not found.", 404);
   try {

@@ -78,6 +78,13 @@ export const financials = pgTable(
     ticker: varchar("ticker", { length: 12 }).notNull(),
     period: text("period").notNull(),
     periodEnd: date("period_end").notNull(),
+    // Provenance — every real number must be traceable to a document.
+    fiscalYear: integer("fiscal_year"),
+    periodType: text("period_type").notNull().default("FY"),
+    currency: text("currency").notNull().default("NGN"),
+    sourceType: text("source_type").notNull().default("seed-sample"),
+    sourceUrl: text("source_url"),
+    verifiedAt: timestamp("verified_at", { withTimezone: true }),
     revenueKobo: bigint("revenue_kobo", { mode: "number" }),
     earningsKobo: bigint("earnings_kobo", { mode: "number" }),
     epsKobo: bigint("eps_kobo", { mode: "number" }),
@@ -87,8 +94,16 @@ export const financials = pgTable(
     debtToEquity: real("debt_to_equity"),
     fcfKobo: bigint("fcf_kobo", { mode: "number" }),
     payoutRatio: real("payout_ratio"),
+    sharesOutstanding: bigint("shares_outstanding", { mode: "number" }),
+    totalAssetsKobo: bigint("total_assets_kobo", { mode: "number" }),
+    totalEquityKobo: bigint("total_equity_kobo", { mode: "number" }),
+    totalDebtKobo: bigint("total_debt_kobo", { mode: "number" }),
+    cashKobo: bigint("cash_kobo", { mode: "number" }),
+    operatingCashFlowKobo: bigint("operating_cash_flow_kobo", { mode: "number" }),
+    capexKobo: bigint("capex_kobo", { mode: "number" }),
     source: text("source").notNull().default(""),
     filedAt: timestamp("filed_at", { withTimezone: true }),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [uniqueIndex("financials_ticker_period").on(t.ticker, t.period)],
 );
@@ -99,8 +114,16 @@ export const dividends = pgTable("dividends", {
   declDate: date("decl_date"),
   qualDate: date("qual_date"),
   payDate: date("pay_date"),
+  // Fiscal period the dividend belongs to (e.g. FY2025), so the latest year
+  // wins even when a filing does not state exact payment dates.
+  period: text("period"),
   dpsKobo: bigint("dps_kobo", { mode: "number" }),
   yieldAtDecl: real("yield_at_decl"),
+  currency: text("currency").notNull().default("NGN"),
+  status: text("status").notNull().default("declared"),
+  sourceType: text("source_type").notNull().default("seed-sample"),
+  sourceUrl: text("source_url"),
+  verifiedAt: timestamp("verified_at", { withTimezone: true }),
 });
 
 export const corporateEvents = pgTable("corporate_events", {
@@ -146,7 +169,8 @@ export const recommendations = pgTable("recommendations", {
   ticker: varchar("ticker", { length: 12 }).notNull(),
   asOf: timestamp("as_of", { withTimezone: true }).notNull().defaultNow(),
   action: actionEnum("action").notNull(),
-  score: smallint("score").notNull(),
+  // null when there was not enough data to produce an honest score.
+  score: smallint("score"),
   confidence: confidenceEnum("confidence").notNull(),
   why: text("why").array().notNull().default([]),
   keyRisk: text("key_risk").notNull().default(""),

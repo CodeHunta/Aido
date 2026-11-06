@@ -7,14 +7,14 @@ export const dynamic = "force-dynamic";
 interface CmpT { score: number | null; dividendYield: number | null; volatility: number | null; closeKobo: number | null; }
 interface CmpF { roe: unknown; profitMargin: unknown; debtToEquity: unknown; }
 const FACTS: [string, string, (t: CmpT, f: CmpF | null) => string][] = [
-  ["Score", "score", (t) => `${t.score ?? "No data"}`],
+  ["Score", "score", (t) => `${t.score ?? "Unavailable"}`],
   ["Action", "BUY", () => ""],
   ["Price", "price", (t) => naira(t.closeKobo)],
-  ["Dividend yield", "yield", (t) => (t.dividendYield != null ? `${(t.dividendYield * 100).toFixed(1)}%` : "No data")],
-  ["ROE", "roe", (_t, f) => (f?.roe != null ? `${(Number(f.roe) * 100).toFixed(1)}%` : "No data")],
-  ["Margin", "margin", (_t, f) => (f?.profitMargin != null ? `${(Number(f.profitMargin) * 100).toFixed(1)}%` : "No data")],
-  ["D/E", "debt", (_t, f) => (f?.debtToEquity != null ? String(f.debtToEquity) : "No data")],
-  ["Volatility", "volatility", (t) => (t.volatility != null ? `${(t.volatility * 100).toFixed(0)}%` : "No data")],
+  ["Dividend yield", "yield", (t) => (t.dividendYield != null ? `${(t.dividendYield * 100).toFixed(1)}%` : "Unavailable")],
+  ["ROE", "roe", (_t, f) => (f?.roe != null ? `${(Number(f.roe) * 100).toFixed(1)}%` : "Unavailable")],
+  ["Margin", "margin", (_t, f) => (f?.profitMargin != null ? `${(Number(f.profitMargin) * 100).toFixed(1)}%` : "Unavailable")],
+  ["D/E", "debt", (_t, f) => (f?.debtToEquity != null ? String(f.debtToEquity) : "Unavailable")],
+  ["Volatility", "volatility", (t) => (t.volatility != null ? `${(t.volatility * 100).toFixed(0)}%` : "Unavailable")],
 ];
 
 export default async function Compare({ searchParams }: { searchParams: { tickers?: string } }) {

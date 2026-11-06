@@ -33,7 +33,8 @@ export const GLOSSARY: Record<string, string> = {
     "Cash a company pays you for holding its stock. Not every company pays it.",
 };
 
-// Honest data labels: price is real delayed NGX, company numbers are still examples.
+// Honest data labels: price is real delayed NGX; company numbers come from
+// audited NGX filings when available and show "Unavailable" otherwise.
 // Keep wording beginner-friendly. No jargon.
 export function DataHonesty({ source, asOf }: { source: string | null; asOf: string | null }) {
   const real = source === "ngx-delayed";
@@ -52,11 +53,13 @@ export function DataHonesty({ source, asOf }: { source: string | null; asOf: str
       {real ? (
         <span>
           <strong>Price: real NGX price</strong> (a little delayed, updates after market close{asOf ? ` · ${asOf}` : ""}).{" "}
-          <strong>Company profits, debts and dividends below are still examples</strong>. Please do not use them for big money decisions yet.
+          Company profits, debts and dividends are taken from <strong>audited NGX filings</strong> when we have them. Anything
+          missing says <strong>Unavailable</strong> — we never fill the gap with a guess.
         </span>
       ) : (
         <span>
-          <strong>Price: example, not real{asOf ? ` · ${asOf}` : ""}.</strong> Company numbers below are also examples. This stock is delisted or still on sample data.
+          <strong>Price: example, not real{asOf ? ` · ${asOf}` : ""}.</strong> This stock is delisted or has no live NGX price.
+          Company numbers still come from audited filings when available.
         </span>
       )}
     </div>

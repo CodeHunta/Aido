@@ -81,7 +81,7 @@ export default function Watchlist() {
               <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
                 <View style={{ flex: 1 }}>
                   <Link href={`/stocks/${t.ticker}`} style={{ fontWeight: "800", fontSize: 16, color: C.text }}>{t.ticker}</Link>
-                  <Text style={{ color: C.muted, fontSize: 13 }}>{naira(t.closeKobo)} · score {t.score ?? "No data"}</Text>
+                  <Text style={{ color: C.muted, fontSize: 13 }}>{naira(t.closeKobo)} · score {t.score ?? "Unavailable"}</Text>
                 </View>
                 <ActionBadge action={t.action} />
                 <Pressable onPress={() => confirmRemove(t.ticker)} style={{ borderWidth: 1, borderColor: C.border, borderRadius: 10, padding: 8 }}>

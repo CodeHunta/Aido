@@ -16,11 +16,11 @@ export default function Methodology() {
           </Text>
         </Card>
         <Card>
-          <Text style={{ fontWeight: "800", color: C.text, marginBottom: 8 }}>What is real today, what is still an example</Text>
+          <Text style={{ fontWeight: "800", color: C.text, marginBottom: 8 }}>What is real today</Text>
           <Text style={{ fontSize: 14, color: C.text, lineHeight: 22 }}>
             Real: prices for all NGX stocks, ETFs and REITs from the official list. It arrives a little delayed.{"\n"}
             Example: WAPCO, FLOURMILL, MRS prices (delisted).{"\n"}
-            Example: company profits, debts and dividends. They are still samples until company reports connect.
+            Real: company profits, debts and dividends, pulled from audited NGX filings. When a company has no recent filing we can read, the app says Unavailable and never fills the gap with a guess.
           </Text>
         </Card>
         <Card>

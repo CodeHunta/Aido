@@ -33,9 +33,9 @@ export default async function Watchlist() {
                 <tr key={t.ticker}>
                   <td><a href={`/stocks/${t.ticker}`} style={{ fontWeight: 700 }}>{t.ticker}</a></td>
                   <td className="num">{naira(t.closeKobo)}</td>
-                  <td className="num"><strong>{t.score}</strong></td>
+                  <td className="num"><strong>{t.score ?? "Unavailable"}</strong></td>
                   <td><ActionBadge action={t.action} /></td>
-                  <td><RemoveButton ticker={t.ticker} kind="watchlist" userId={USER} /></td>
+                  <td><RemoveButton ticker={t.ticker} kind="watchlist" /></td>
                 </tr>
               ))}
             </tbody>

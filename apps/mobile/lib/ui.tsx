@@ -30,7 +30,7 @@ export const C = {
 // saved price look wrong even though the stored value is exact. Negative
 // amounts read -₦1,234 rather than ₦-1,234.
 export const naira = (kobo: number | null | undefined): string => {
-  if (kobo == null) return "No data";
+  if (kobo == null) return "Unavailable";
   const sign = kobo < 0 ? "-" : "";
   return sign + "₦" + (Math.abs(kobo) / 100).toLocaleString("en-NG", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
 };

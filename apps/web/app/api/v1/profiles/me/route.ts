@@ -2,7 +2,7 @@ import { eq } from "@aido/db/drizzle";
 import { db } from "@aido/db";
 import { investorProfiles } from "@aido/db/schema";
 import { getProfile } from "@aido/db/traits";
-import { bad, logEvent, ok, userOf } from "../../_lib";
+import { bad, logEvent, ok, sessionUserId, userOf } from "../../_lib";
 
 export const dynamic = "force-dynamic";
 
@@ -16,13 +16,14 @@ const HORIZONS: Horizon[] = ["short", "medium", "long"];
 const OBJECTIVES: Objective[] = ["growth", "dividend", "preservation", "income", "combination"];
 const FREQUENCIES: Frequency[] = ["once", "monthly", "irregular"];
 
-export async function GET(req: Request) {
-  const p = await getProfile(await userOf(req));
+export async function GET() {
+  const p = await getProfile(await userOf());
   return p ? ok(p) : bad("No profile yet", 404);
 }
 
 export async function PUT(req: Request) {
-  const userId = await userOf(req);
+  const userId = await sessionUserId();
+  if (!userId) return bad("Log in to save your profile.", 401);
   const body = (await req.json().catch(() => null)) as Partial<{
     risk: Risk;
     horizon: Horizon;

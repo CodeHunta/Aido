@@ -27,7 +27,8 @@ describe("scoreStock core", () => {
     const r = scoreStock(base);
     expect(["BUY", "WATCH"]).toContain(r.action);
     expect(["high", "med"]).toContain(r.confidence);
-    expect(r.score).toBeGreaterThanOrEqual(65);
+    expect(r.score).not.toBeNull();
+    expect(r.score!).toBeGreaterThanOrEqual(65);
     expect(r.why).toHaveLength(3);
     expect(r.keyRisk.length).toBeGreaterThan(0);
   });
@@ -109,16 +110,36 @@ describe("scoreStock core", () => {
     expect(r.action).not.toBe("BUY");
   });
 
-  it("weights dividends more for income investors", () => {
-    const noDiv = scoreStock({ ...base, dividendYield: null, payoutRatio: null });
-    const noDivIncome = scoreStock({ ...base, dividendYield: null, payoutRatio: null, objective: "income" });
-    expect(noDivIncome.score).toBeLessThanOrEqual(noDiv.score);
+  it("marks missing data unavailable instead of inventing a neutral score", () => {
+    const r = scoreStock({ ...base, dividendYield: null, payoutRatio: null });
+    expect(r.factors.dividend).toBeNull();
+    expect(r.unavailable).toContain("dividends");
+    // Growth and valuation still work from the data that exists.
+    expect(r.score).not.toBeNull();
+    expect(r.factors.growth).not.toBeNull();
+  });
+
+  it("renormalises over available factors when growth is unknown", () => {
+    const r = scoreStock({ ...base, revenueGrowth: null, earningsGrowth: null });
+    expect(r.factors.growth).toBeNull();
+    expect(r.unavailable).toContain("growth");
+    expect(r.score).not.toBeNull();
+  });
+
+  it("distinguishes an unknown dividend from a company that pays none", () => {
+    const unknown = scoreStock({ ...base, dividendYield: null, payoutRatio: null });
+    const none = scoreStock({ ...base, dividendYield: 0, payoutRatio: null });
+    const checkedNone = scoreStock({ ...base, dividendYield: null, payoutRatio: null, dividendDataAvailable: false });
+    expect(unknown.factors.dividend).toBeNull();
+    expect(none.factors.dividend).toBe(15);
+    expect(checkedNone.factors.dividend).toBe(15);
   });
 
   it("keeps every score inside 0-100", () => {
     const r = scoreStock({ ...base, pe: 100, roe: -0.2, volatility: 2, momentum12m: -0.8 });
-    expect(r.score).toBeGreaterThanOrEqual(0);
-    expect(r.score).toBeLessThanOrEqual(100);
+    expect(r.score).not.toBeNull();
+    expect(r.score!).toBeGreaterThanOrEqual(0);
+    expect(r.score!).toBeLessThanOrEqual(100);
   });
 
   it("downgrades stale financials to med confidence", () => {

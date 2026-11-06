@@ -7,8 +7,8 @@ import { ok, userOf } from "../../_lib";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(req: Request) {
-  const userId = await userOf(req);
+export async function GET() {
+  const userId = await userOf();
   const held = await db.select().from(portfolios).where(eq(portfolios.userId, userId));
   const inputs = [];
   for (const h of held) {

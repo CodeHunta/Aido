@@ -92,7 +92,7 @@ export default function Explore() {
                       <Text style={{ color: C.muted, fontSize: 12 }} numberOfLines={1}>{s.name}</Text>
                     </View>
                     <Text style={{ fontWeight: "800", color: C.text }}>{naira(s.closeKobo)}</Text>
-                    <Text style={{ fontWeight: "800", color: C.text, width: 30, textAlign: "right" }}>{s.score ?? "No data"}</Text>
+                    <Text style={{ fontWeight: "800", color: C.text, width: 30, textAlign: "right" }}>{s.score ?? "Unavailable"}</Text>
                     <ActionBadge action={s.action} />
                   </View>
                 </Card>

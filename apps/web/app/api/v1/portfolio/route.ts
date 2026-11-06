@@ -2,12 +2,12 @@ import { and, eq } from "@aido/db/drizzle";
 import { db } from "@aido/db";
 import { portfolios } from "@aido/db/schema";
 import { getTraits } from "@aido/db/traits";
-import { bad, logEvent, ok, userOf } from "../_lib";
+import { bad, logEvent, ok, sessionUserId, userOf } from "../_lib";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(req: Request) {
-  const held = await db.select().from(portfolios).where(eq(portfolios.userId, await userOf(req)));
+export async function GET() {
+  const held = await db.select().from(portfolios).where(eq(portfolios.userId, await userOf()));
   const rows = [];
   for (const h of held) {
     const t = await getTraits(h.ticker);
@@ -17,7 +17,8 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  const userId = await userOf(req);
+  const userId = await sessionUserId();
+  if (!userId) return bad("Log in to save your portfolio.", 401);
   const body = (await req.json().catch(() => null)) as { ticker?: string; qty?: number; avgCostKobo?: number } | null;
   if (
     !body?.ticker ||
@@ -56,7 +57,8 @@ export async function POST(req: Request) {
 }
 
 export async function DELETE(req: Request) {
-  const userId = await userOf(req);
+  const userId = await sessionUserId();
+  if (!userId) return bad("Log in to change your portfolio.", 401);
   const ticker = (new URL(req.url).searchParams.get("ticker") ?? "").toUpperCase();
   if (!ticker) return bad("Need ?ticker=");
   const removed = await db

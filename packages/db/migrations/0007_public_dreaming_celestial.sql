@@ -1,0 +1,1 @@
+ALTER TABLE "recommendations" ALTER COLUMN "score" DROP NOT NULL;

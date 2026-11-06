@@ -42,6 +42,7 @@ async function personalTop(profile: InvestorTraits, limit: number) {
   const recs = await db.select().from(recommendations);
   const out: { ticker: string; score: number; action: string; level: string; reason: string }[] = [];
   for (const r of recs) {
+    if (r.score == null) continue;
     const t = await traits(r.ticker);
     const s = suitFor(profile, t);
     out.push({ ticker: r.ticker, score: r.score, action: r.action ?? "?", level: s.level, reason: s.reasons[0] ?? "" });

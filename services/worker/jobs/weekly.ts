@@ -58,7 +58,11 @@ async function main() {
   const week = process.argv[2] ?? lastSunday();
   console.log(`[weekly] week=${week}`);
 
-  const recs = await db.select().from(recommendations).orderBy(desc(recommendations.score));
+  // Only recs with a real score can win a weekly pick. Nulls are excluded,
+  // never treated as zero.
+  const recs = (await db.select().from(recommendations))
+    .filter((r): r is typeof r & { score: number } => r.score != null)
+    .sort((a, b) => b.score - a.score);
   const market = recs[0] && recs[0].score >= 65 ? recs[0] : null;
   await db.delete(weeklyPicks);
   await db.delete(alerts).where(like(alerts.id, `${week}%`)); // idempotent reruns

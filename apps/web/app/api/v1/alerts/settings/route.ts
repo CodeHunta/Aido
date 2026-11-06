@@ -1,19 +1,20 @@
 import { eq } from "@aido/db/drizzle";
 import { alertPreferences, db } from "@aido/db";
-import { bad, ok, userOf } from "../../_lib";
+import { bad, ok, sessionUserId, userOf } from "../../_lib";
 
 export const dynamic = "force-dynamic";
 
 const DEFAULTS = { weeklyPick: true, recChange: true, priceMove: true, dividend: true, news: true };
 
-export async function GET(req: Request) {
-  const userId = await userOf(req);
+export async function GET() {
+  const userId = await userOf();
   const row = (await db.select().from(alertPreferences).where(eq(alertPreferences.userId, userId)))[0];
   return ok(row ? { weeklyPick: row.weeklyPick, recChange: row.recChange, priceMove: row.priceMove, dividend: row.dividend, news: row.news } : DEFAULTS);
 }
 
 export async function PATCH(req: Request) {
-  const userId = await userOf(req);
+  const userId = await sessionUserId();
+  if (!userId) return bad("Log in to change alert settings.", 401);
   let body: Partial<typeof DEFAULTS>;
   try {
     body = await req.json();

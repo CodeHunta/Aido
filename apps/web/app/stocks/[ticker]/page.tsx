@@ -9,9 +9,23 @@ import { DataHonesty, Tip } from "../../_glossary";
 import { Nav } from "../../_nav";
 
 export const dynamic = "force-dynamic";
-const USER = await currentUserId();
+
+// Compact naira for headline figures: ₦2.15tn, ₦865.7bn, ₦4.3bn.
+function money(kobo: number | null | undefined): string {
+  if (kobo == null) return "Unavailable";
+  const n = kobo / 100;
+  const abs = Math.abs(n);
+  const sign = n < 0 ? "-" : "";
+  if (abs >= 1e12) return `${sign}₦${(abs / 1e12).toFixed(2)}tn`;
+  if (abs >= 1e9) return `${sign}₦${(abs / 1e9).toFixed(1)}bn`;
+  if (abs >= 1e6) return `${sign}₦${(abs / 1e6).toFixed(1)}m`;
+  return `${sign}₦${abs.toLocaleString("en-NG", { maximumFractionDigits: 2 })}`;
+}
 
 export default async function StockPage({ params }: { params: { ticker: string } }) {
+  // Per-request lookup: hoisting this to module scope would pin the page to
+  // the first visitor (or the demo user) for the life of the server process.
+  const USER = await currentUserId();
   const ticker = decodeURIComponent(params.ticker).toUpperCase();
   const t = await getTraits(ticker);
   if (!t) return <main style={{ padding: 24 }}>Unknown stock {ticker}. <a href="/discover">Back</a></main>;
@@ -23,13 +37,16 @@ export default async function StockPage({ params }: { params: { ticker: string }
   const history = await db.select().from(recommendations).where(eq(recommendations.ticker, ticker)).orderBy(desc(recommendations.asOf)).limit(10);
   const watched = (await db.select().from(watchlists).where(eq(watchlists.userId, USER))).some((w) => w.ticker === ticker);
   const max = Math.max(...prices.map((p) => p.closeKobo ?? 0), 1);
+  const thesisBody = thesis?.thesis as
+    | { whyNow?: string; contradictory?: string; whatWouldChange?: string; factors?: Record<string, number | null>; unavailable?: string[] }
+    | null;
 
   return (
     <main style={{ maxWidth: 960, margin: "0 auto", padding: "24px 16px" }}>
       <Nav />
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
         <h1 style={{ fontSize: 28, fontWeight: 800, margin: 0 }}>{t.name} <span style={{ color: "var(--muted)", fontSize: 16 }}>{t.ticker}</span></h1>
-        <WatchButton ticker={ticker} watched={watched} userId={USER} />
+        <WatchButton ticker={ticker} watched={watched} />
       </div>
       <p style={{ color: "var(--muted)", fontSize: 13 }}>{t.sector} · {t.categories.join(" · ")}</p>
       <DataHonesty source={t.source} asOf={t.asOf} />
@@ -61,26 +78,63 @@ export default async function StockPage({ params }: { params: { ticker: string }
           </div>
         </Card>
         <Card>
-          <h3>Numbers <span style={{ fontWeight: 400, fontSize: 12, color: "var(--muted)" }}>(tap ? for plain meaning)</span> <span style={{ fontSize: 11, fontWeight: 800, background: "#fef3c7", borderRadius: 999, padding: "2px 8px" }}>EXAMPLE</span></h3>
-          <p style={{ fontSize: 12, color: "var(--muted)" }}>Company profits, debts and dividends are still examples. Price above is {t.source === "ngx-delayed" ? "real NGX (delayed)" : "also an example"}.</p>
-          <table className="tbl"><colgroup><col style={{ width: "50%" }} /><col style={{ width: "50%" }} /></colgroup><tbody>
-            <tr><td>ROE <Tip term="roe" /></td><td className="num">{fin?.roe != null ? `${(Number(fin.roe) * 100).toFixed(1)}%` : "No data"}</td></tr>
-            <tr><td>Margin <Tip term="margin" /></td><td className="num">{fin?.profitMargin != null ? `${(Number(fin.profitMargin) * 100).toFixed(1)}%` : "No data"}</td></tr>
-            <tr><td>D/E <Tip term="debt" /></td><td className="num">{fin?.debtToEquity ?? "No data"}</td></tr>
-            <tr><td>Dividend yield <Tip term="yield" /></td><td className="num">{t.dividendYield != null ? `${(t.dividendYield * 100).toFixed(1)}%` : "No data"}</td></tr>
-            <tr><td>Volatility <Tip term="volatility" /></td><td className="num">{t.volatility != null ? `${(t.volatility * 100).toFixed(0)}%` : "No data"}</td></tr>
-          </tbody></table>
+          <h3>Reported numbers {fin?.period ? <span style={{ fontWeight: 400, fontSize: 12, color: "var(--muted)" }}>({fin.period}, audited)</span> : null}</h3>
+          {fin ? (
+            <>
+              <table className="tbl"><colgroup><col style={{ width: "50%" }} /><col style={{ width: "50%" }} /></colgroup><tbody>
+                <tr><td>Revenue</td><td className="num">{money(fin.revenueKobo)}</td></tr>
+                <tr><td>Net profit</td><td className="num">{money(fin.earningsKobo)}</td></tr>
+                <tr><td>Earnings per share</td><td className="num">{fin.epsKobo != null ? naira(fin.epsKobo) : "Unavailable"}</td></tr>
+                <tr><td>ROE <Tip term="roe" /></td><td className="num">{fin.roe != null ? `${(Number(fin.roe) * 100).toFixed(1)}%` : "Unavailable"}</td></tr>
+                <tr><td>Margin <Tip term="margin" /></td><td className="num">{fin.profitMargin != null ? `${(Number(fin.profitMargin) * 100).toFixed(1)}%` : "Unavailable"}</td></tr>
+                <tr><td>D/E <Tip term="debt" /></td><td className="num">{fin.debtToEquity != null ? Number(fin.debtToEquity).toFixed(2) : "Unavailable"}</td></tr>
+                <tr><td>Dividend / share</td><td className="num">{t.dpsKobo != null ? naira(t.dpsKobo) : "Unavailable"}</td></tr>
+                <tr><td>Dividend yield <Tip term="yield" /></td><td className="num">{t.dividendYield != null ? `${(t.dividendYield * 100).toFixed(1)}%` : "Unavailable"}</td></tr>
+                <tr><td>Volatility <Tip term="volatility" /></td><td className="num">{t.volatility != null ? `${(t.volatility * 100).toFixed(0)}%` : "Unavailable"}</td></tr>
+              </tbody></table>
+              {fin.sourceUrl ? (
+                <p style={{ fontSize: 12, color: "var(--muted)", marginBottom: 0 }}>
+                  Source: <a href={fin.sourceUrl} target="_blank" rel="noreferrer">audited NGX filing (PDF)</a>
+                  {fin.verifiedAt ? ` · checked ${new Date(fin.verifiedAt).toLocaleDateString()}` : ""}
+                </p>
+              ) : null}
+            </>
+          ) : (
+            <p style={{ fontSize: 13, color: "var(--muted)" }}>
+              <strong>Unavailable.</strong> We have not extracted audited statements for this company yet. The score ignores
+              fundamentals rather than guessing them.
+            </p>
+          )}
         </Card>
         <Card>
           <h3>Full thesis</h3>
           {thesis ? (
             <ul style={{ fontSize: 14 }}>
-              <li><strong>Now:</strong> {(thesis.thesis as { whyNow?: string })?.whyNow}</li>
-              <li><strong>Against:</strong> {(thesis.thesis as { contradictory?: string })?.contradictory}</li>
-              <li><strong>Changes if:</strong> {(thesis.thesis as { whatWouldChange?: string })?.whatWouldChange}</li>
+              <li><strong>Now:</strong> {thesisBody?.whyNow ?? "Not enough data yet."}</li>
+              <li><strong>Against:</strong> {thesisBody?.contradictory ?? "Not enough data yet."}</li>
+              <li><strong>Changes if:</strong> {thesisBody?.whatWouldChange ?? "Not enough data yet."}</li>
               <li><strong>Engine:</strong> {thesis.engineVersion}</li>
             </ul>
           ) : <p>No thesis yet.</p>}
+          {thesisBody?.factors && (
+            <table className="tbl" style={{ fontSize: 13 }}>
+              <tbody>
+                {[
+                  ["Fundamentals", thesisBody.factors.fundamental],
+                  ["Valuation", thesisBody.factors.valuation],
+                  ["Growth", thesisBody.factors.growth],
+                  ["Market trend", thesisBody.factors.market],
+                  ["Dividends", thesisBody.factors.dividend],
+                  ["Risk", thesisBody.factors.riskInverse],
+                ].map(([label, value]) => (
+                  <tr key={String(label)}>
+                    <td>{label}</td>
+                    <td className="num">{value == null ? "Unavailable" : value}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
           {suitability && <p style={{ fontSize: 13 }}><strong>Why for you:</strong> {suitability.reasons.join("; ")}</p>}
         </Card>
       </div>
@@ -89,7 +143,7 @@ export default async function StockPage({ params }: { params: { ticker: string }
           <h3>Recommendation history</h3>
           <div className="tbl-wrap">
           <table className="tbl"><colgroup><col style={{ width: "28%" }} /><col style={{ width: "26%" }} /><col style={{ width: "20%" }} /><col style={{ width: "26%" }} /></colgroup><thead><tr><th>Date</th><th>Action</th><th className="num">Score</th><th>Engine</th></tr></thead>
-            <tbody>{history.map((h) => <tr key={h.id}><td className="num">{new Date(h.asOf).toLocaleDateString()}</td><td><ActionBadge action={h.action} /></td><td className="num">{h.score}</td><td>{h.engineVersion}</td></tr>)}</tbody>
+            <tbody>{history.map((h) => <tr key={h.id}><td className="num">{new Date(h.asOf).toLocaleDateString()}</td><td><ActionBadge action={h.action} /></td><td className="num">{h.score ?? "Unavailable"}</td><td>{h.engineVersion}</td></tr>)}</tbody>
           </table>
           </div>
         </div>

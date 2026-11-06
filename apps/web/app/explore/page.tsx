@@ -111,7 +111,7 @@ export default async function Explore({ searchParams }: { searchParams: { q?: st
               <tr key={r.ticker}>
                 <td><a href={`/stocks/${r.ticker}`} style={{ fontWeight: 700 }}>{r.ticker}</a> <span className="ellipsis" style={{ color: "var(--muted)", fontSize: 12 }}>{r.name}</span></td>
                 <td className="num">{naira(r.closeKobo)}</td>
-                <td className="num"><strong>{r.score ?? "No data"}</strong></td>
+                <td className="num"><strong>{r.score ?? "Unavailable"}</strong></td>
                 <td><ActionBadge action={r.action} /></td>
                 <td>{r.suitability === "low" ? "Outside profile" : (r.suitability ?? "Not checked yet")}</td>
               </tr>

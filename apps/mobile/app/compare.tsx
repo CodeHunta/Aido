@@ -38,10 +38,10 @@ export default function Compare() {
 
   const rows: [string, string, (c: Cmp) => string][] = [
     ["Price", "price", (c) => naira(c.closeKobo)],
-    ["Score", "score", (c) => `${c.score ?? "No data"}`],
-    ["Yield", "yield", (c) => (c.dividendYield != null ? `${(c.dividendYield * 100).toFixed(1)}%` : "No data")],
-    ["ROE", "roe", (c) => (c.financials?.roe != null ? `${(Number(c.financials.roe) * 100).toFixed(1)}%` : "No data")],
-    ["Volatility", "volatility", (c) => (c.volatility != null ? `${(c.volatility * 100).toFixed(0)}%` : "No data")],
+    ["Score", "score", (c) => `${c.score ?? "Unavailable"}`],
+    ["Yield", "yield", (c) => (c.dividendYield != null ? `${(c.dividendYield * 100).toFixed(1)}%` : "Unavailable")],
+    ["ROE", "roe", (c) => (c.financials?.roe != null ? `${(Number(c.financials.roe) * 100).toFixed(1)}%` : "Unavailable")],
+    ["Volatility", "volatility", (c) => (c.volatility != null ? `${(c.volatility * 100).toFixed(0)}%` : "Unavailable")],
   ];
 
   return (

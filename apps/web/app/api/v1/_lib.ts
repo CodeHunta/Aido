@@ -7,17 +7,23 @@ import { auditLogs } from "@aido/db/schema";
 export const dynamic = "force-dynamic";
 export const DEFAULT_USER = "demo-moderate";
 
-// Logged-in users get their own data. Everyone else shares the demo shelf
-// until login (keeps every screen working with zero setup).
-export async function userOf(req: Request): Promise<string> {
+// The verified session owner, or null when nobody is logged in.
+// Identity must never come from the request URL or body: a visitor can edit
+// those, so trusting them would let anyone act as another account.
+export async function sessionUserId(): Promise<string | null> {
   try {
     const session = await auth.api.getSession({ headers: await headers() });
-    if (session?.user?.id) return session.user.id;
+    return session?.user?.id ?? null;
   } catch {
-    // no session, so fall through to demo
+    return null;
   }
-  const u = new URL(req.url).searchParams.get("user");
-  return u && u.length > 0 ? u : DEFAULT_USER;
+}
+
+// Read-only pages and endpoints fall back to the shared demo shelf so the
+// product is browsable before login. Writes must use sessionUserId() and
+// return 401 when it is null.
+export async function userOf(): Promise<string> {
+  return (await sessionUserId()) ?? DEFAULT_USER;
 }
 
 export function ok(data: unknown, asOf?: string | null) {

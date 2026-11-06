@@ -4,11 +4,11 @@ import { bad, ok, userOf } from "../../_lib";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(req: Request, { params }: { params: { ticker: string } }) {
+export async function GET(_req: Request, { params }: { params: { ticker: string } }) {
   const ticker = decodeURIComponent(params.ticker).toUpperCase();
   const t = await getTraits(ticker);
   if (!t) return bad("Unknown ticker", 404);
-  const profile = await getProfile(await userOf(req));
+  const profile = await getProfile(await userOf());
   const suitability = profile
     ? suitFor(
         { risk: profile.risk, horizon: profile.horizon, objective: profile.objective },

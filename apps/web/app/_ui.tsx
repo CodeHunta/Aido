@@ -1,5 +1,5 @@
 export function naira(kobo: number | null | undefined): string {
-  if (kobo == null) return "No data";
+  if (kobo == null) return "Unavailable";
   const sign = kobo < 0 ? "-" : "";
   return sign + "₦" + (Math.abs(kobo) / 100).toLocaleString("en-NG", { maximumFractionDigits: 2 });
 }
@@ -11,7 +11,15 @@ export function ActionBadge({ action }: { action: string | null }) {
 }
 
 export function ScoreRing({ score }: { score: number | null }) {
-  const s = score ?? 0;
+  if (score == null) {
+    return (
+      <svg width="72" height="72" viewBox="0 0 96 96" aria-label="Score unavailable">
+        <circle cx="48" cy="48" r="40" fill="none" stroke="#e2e8f0" strokeWidth="10" />
+        <text x="48" y="53" textAnchor="middle" fontWeight="700" fontSize="12" fill="#64748b">N/A</text>
+      </svg>
+    );
+  }
+  const s = score;
   const off = 251.3 - (251.3 * s) / 100;
   const color = s >= 75 ? "#16a34a" : s >= 65 ? "#2563eb" : s >= 50 ? "#d97706" : "#dc2626";
   return (

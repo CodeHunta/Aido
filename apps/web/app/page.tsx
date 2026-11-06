@@ -51,7 +51,7 @@ function PreviewMock() {
             <li>Valuation reasonable at this price</li>
             <li><strong>Key risk:</strong> oil-price exposure</li>
           </ul>
-          <p style={{ fontSize: 11, color: "var(--muted)" }}>Preview with sample data.</p>
+          <p style={{ fontSize: 11, color: "var(--muted)" }}>Illustrative example — not live data.</p>
         </div>
       </div>
     </div>

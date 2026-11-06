@@ -24,7 +24,8 @@ export default function Methodology() {
         <ul style={{ fontSize: 14, lineHeight: 1.7, paddingLeft: 18 }}>
           <li><strong>Real:</strong> prices for all NGX stocks, ETFs and REITs from the official price list. It arrives a little delayed and updates after market close.</li>
           <li><strong>Example:</strong> WAPCO, FLOURMILL and MRS prices (delisted, kept as marked examples).</li>
-          <li><strong>Example:</strong> company profits, debts, margins and dividends. They are still sample shapes until we connect company reports. Scores use them, so treat BUY and HOLD with care for big money.</li>
+          <li><strong>Real:</strong> company profits, debts, margins and dividends, extracted from audited NGX filings. Each stock page links to the filing it came from and shows how fresh it is.</li>
+          <li><strong>Unavailable:</strong> when a company has no recent audited filing we can read, the app says so. It never fills the gap with a guess, and the score ignores that factor instead of scoring it neutral.</li>
           <li>Every price keeps its source. Old sample history was rescaled once to meet the first real price (shape kept, level fixed). Returns were not changed.</li>
         </ul>
       </Card>

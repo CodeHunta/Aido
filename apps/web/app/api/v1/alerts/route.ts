@@ -5,11 +5,11 @@ import { ok, userOf } from "../_lib";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(req: Request) {
+export async function GET() {
   const rows = await db
     .select()
     .from(alerts)
-    .where(eq(alerts.userId, await userOf(req)))
+    .where(eq(alerts.userId, await userOf()))
     .orderBy(desc(alerts.createdAt))
     .limit(50);
   return ok(rows);

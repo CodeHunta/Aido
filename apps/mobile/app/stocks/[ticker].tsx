@@ -107,7 +107,7 @@ export default function StockDetail() {
               </View>
               <Text style={{ fontSize: 22, fontWeight: "800", color: C.text, marginTop: 4 }}>{naira(d.closeKobo)}</Text>
               <View style={{ flexDirection: "row", alignItems: "center", flexWrap: "wrap" }}>
-                <Text style={{ fontSize: 13, color: C.muted }}>Confidence: {d.confidence ?? "No data"}</Text>
+                <Text style={{ fontSize: 13, color: C.muted }}>Confidence: {d.confidence ?? "Unavailable"}</Text>
                 <Tip term="confidence" />
               </View>
               <View style={{ flexDirection: "row", alignItems: "center", flexWrap: "wrap" }}>
@@ -136,12 +136,12 @@ export default function StockDetail() {
         </Card>
         <Card>
           <Text style={{ fontWeight: "800", color: C.text, marginBottom: 4 }}>Numbers (tap ? for plain meaning)</Text>
-          <Text style={{ fontSize: 12, color: C.muted, marginBottom: 8 }}>EXAMPLE: company profits and dividends are still examples. Price above is {d.source === "ngx-delayed" ? "real NGX (delayed)" : "also an example"}.</Text>
+          <Text style={{ fontSize: 12, color: C.muted, marginBottom: 8 }}>Company numbers come from audited NGX filings when available. Anything missing is shown as Unavailable, never guessed. Price above is {d.source === "ngx-delayed" ? "real NGX (delayed)" : "an example"}.</Text>
           {(
             [
-            ["ROE", "roe", d.financials?.roe != null ? `${(Number(d.financials.roe) * 100).toFixed(1)}%` : "No data"],
-            ["Dividend yield", "yield", d.dividendYield != null ? `${(d.dividendYield * 100).toFixed(1)}%` : "No data"],
-            ["Volatility", "volatility", d.volatility != null ? `${(d.volatility * 100).toFixed(0)}%` : "No data"],
+            ["ROE", "roe", d.financials?.roe != null ? `${(Number(d.financials.roe) * 100).toFixed(1)}%` : "Unavailable"],
+            ["Dividend yield", "yield", d.dividendYield != null ? `${(d.dividendYield * 100).toFixed(1)}%` : "Unavailable"],
+            ["Volatility", "volatility", d.volatility != null ? `${(d.volatility * 100).toFixed(0)}%` : "Unavailable"],
             ] as [string, string, string][]
           ).map(([k, tip, v]) => (
             <View key={k} style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingVertical: 6, borderBottomWidth: 1, borderBottomColor: C.border }}>

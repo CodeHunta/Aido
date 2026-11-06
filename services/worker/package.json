@@ -7,6 +7,7 @@
     "dev": "tsx ./index.ts",
     "score": "tsx ./jobs/score.ts",
     "ngx": "tsx ./jobs/ngx.ts",
+    "fundamentals": "tsx ./jobs/fundamentals.ts",
     "ngx:splice": "tsx ./jobs/splice.ts",
     "sql": "tsx ./jobs/sql.ts",
     "demo:phase5": "tsx ./jobs/demo5.ts",
@@ -18,7 +19,8 @@
     "@aido/db": "workspace:*",
     "@aido/email": "workspace:*",
     "@aido/scoring": "workspace:*",
-    "postgres": "3.4.5"
+    "postgres": "3.4.5",
+    "unpdf": "^2.1.0"
   },
   "devDependencies": {
     "@types/node": "22.7.5",
