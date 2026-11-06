@@ -1,0 +1,35 @@
+# Weekly fundamentals refresh — runs on GitHub's servers, no PC needed.
+# Reads each company's latest audited NGX filings, then re-scores the universe.
+# Manual run anytime: Actions tab -> "Weekly fundamentals" -> Run workflow.
+name: Weekly fundamentals
+
+on:
+  schedule:
+    # Saturday 06:00 UTC, after the Friday NGX close and well before Monday.
+    - cron: "0 6 * * 6"
+  workflow_dispatch:
+
+jobs:
+  fundamentals:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @aido/db migrate
+        env:
+          DATABASE_URL: ${{ secrets.NEON_DATABASE_URL }}
+          DATABASE_SSL: require
+      - run: pnpm --filter @aido/worker fundamentals
+        env:
+          DATABASE_URL: ${{ secrets.NEON_DATABASE_URL }}
+          DATABASE_SSL: require
+      - run: pnpm --filter @aido/worker score
+        env:
+          DATABASE_URL: ${{ secrets.NEON_DATABASE_URL }}
+          DATABASE_SSL: require

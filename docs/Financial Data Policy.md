@@ -132,6 +132,7 @@ Current behaviour:
 
 - the two most recent audited annual filings per company are read, which yields the current year and a prior-year comparative;
 - the prior year is also used for growth;
+- the job runs weekly on GitHub Actions (`.github/workflows/fundamentals.yml`) and re-scores afterwards, so no local machine has to be online;
 - a filing that cannot be downloaded, dated, or read (scanned PDF) never deletes the figures already stored for that company: the previous rows stay, and only a successful re-parse replaces them;
 - companies whose newest audited filing is older than the freshness window show "unavailable" rather than stale numbers;
 - companies with no machine-readable text layer (scanned PDFs) are skipped and remain unavailable until a text-based filing appears.
